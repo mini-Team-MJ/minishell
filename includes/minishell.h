@@ -20,6 +20,17 @@
 
 # define INITIAL_CAP 16
 
+typedef	struct	t_token
+{
+
+}	t_token;
+
+typedef struct	t_env
+{
+	char	*name;
+	char	*value;
+}	t_env;
+
 /* 전역 시그널 플래그 (최대 1개) */
 extern volatile sig_atomic_t g_signal;
 
