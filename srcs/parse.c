@@ -12,38 +12,11 @@
 
 #include "../includes/minishell.h"
 
-enum	Type
-{
-	WORD,
-	CAT,
-	PIPE,
-	CD,
-	EXPORT,
-	ENV,
-	ECHO,
-	UNSET,
-	EXIT,
-    	N,
-	PWD,
-	EV,
-	RD_O,
-	RD_O_APPEND,
-	RD_I,
-	READ_I,
-};
-
-typedef struct	t_token 
-{
-	size_t	id;
-	enum	Type t;
-	char	*str;
-	int	int_val;
-}   t_token ;
-
 int	is_whitespace(char c)
 {
 	return((c == ' ' || c == 9));
 }
+
 int	handle_quotes(char c)
 {
 	if (c == '\')
@@ -140,7 +113,6 @@ void set_type(t_token *token)
         token->t = READ_I;
 }
 
-
 t_token *make_token(char *str)
 {
     t_token *token;
@@ -175,7 +147,17 @@ ssize_t	count_token_amount(char *line)
 	}
 	return (count);
 }
+void	delete_tokens(t_token **tokens, size_t count)
+{
+	while(count > 0)
+	{
+		free(tokens[count]->str);
+		free(tokens[count]);
+		count--;
+	}
+	free(tokens);
 
+}
 t_token    **tokenize(char *line)
 {
     size_t  cap;
@@ -196,6 +178,11 @@ t_token    **tokenize(char *line)
     	if (!is_whitespace(line[i]))
     	{
     		tokens[tc] = make_token(&line[i]);
+    		if(!tokens[tc])
+    		{
+    			delete_tokens(tokens, tc);
+    			return (NULL);
+    		}
     		tc++;
     		while (line[i] && !is_whitespace(line[i]))
     			i++;
@@ -204,13 +191,4 @@ t_token    **tokenize(char *line)
     		i++;
     }
     return (tokens);
-}
-
-int main(int argc, char **argv)
-{
-    t_token **t;
-    size_t  i = 0;
-    t = tokenize(">> cat hello");
-    printf("%d", t[0]->t);
-    return (0);
 }
