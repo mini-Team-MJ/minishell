@@ -86,31 +86,31 @@ int ftstrcmp(char *s1, char *s2)
 void set_type(t_token *token)
 {
     if (ftstrcmp("echo", token->str))
-        token->t = ECHO;
+        token->type = ECHO;
     if (ftstrcmp("cat", token->str))
-        token->t = CAT;
+        token->type = CAT;
     if (ftstrcmp("pwd", token->str))
-        token->t = PWD;
+        token->type = PWD;
     if (ftstrcmp("exit", token->str))
-        token->t = EXIT;
+        token->type = EXIT;
     if (ftstrcmp("|", token->str))
-        token->t = PIPE;
+        token->type = PIPE;
     if (ftstrcmp("unset", token->str))
-        token->t = UNSET;
+        token->type = UNSET;
     if (ftstrcmp("export", token->str))
-        token->t = EXPORT;
+        token->type = EXPORT;
     if (ftstrcmp("-n", token->str))
-        token->t = N;
+        token->type = N;
     if (ftstrcmp("env", token->str))
-        token->t = EV;
+        token->type = EV;
     if (ftstrcmp(">", token->str))
-        token->t = RD_O;
+        token->type = RD_O;
     if (ftstrcmp(">>", token->str))
-        token->t = RD_O_APPEND;
+        token->type = RD_O_APPEND;
     if (ftstrcmp("<", token->str))
-        token->t = RD_I;
+        token->type = RD_I;
     if (ftstrcmp("<<", token->str))
-        token->t = READ_I;
+        token->type = READ_I;
 }
 
 t_token *make_token(char *str)
@@ -119,7 +119,7 @@ t_token *make_token(char *str)
     token = (t_token *)malloc(sizeof(t_token *));
     if (!token)
         return (NULL);
-    token->t = WORD;
+    token->type = WORD;
     token->str = extract_param(str);
     if (!token->str)
         return (NULL);
@@ -192,3 +192,25 @@ t_token    **tokenize(char *line)
     }
     return (tokens);
 }
+
+/*
+char    **tokenize(char *line)
+{
+    size_t  cap;
+    size_t  cnt;
+    char    **tokens;
+    cap = INITIAL_CAP;
+    cnt = 0;
+    if (!line || !*line || line[0] == '\0')
+        return NULL;
+    tokens = (char **)malloc(cap * sizeof(char *));
+    if (!tokens)
+        return NULL;
+    while (line[0])
+    {
+        
+    }
+    return NULL;
+}
+*/
+

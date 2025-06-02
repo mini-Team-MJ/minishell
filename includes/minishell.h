@@ -20,10 +20,33 @@
 
 # define INITIAL_CAP 16
 
-typedef	struct	t_token
+enum	Types
 {
+	WORD,
+	CAT,
+	PIPE,
+	CD,
+	EXPORT,
+	ENV,
+	ECHO,
+	UNSET,
+	EXIT,
+    	N,
+	PWD,
+	EV,
+	RD_O,
+	RD_O_APPEND,
+	RD_I,
+	READ_I,
+};
 
-}	t_token;
+typedef struct	t_token 
+{
+	size_t	id;
+	enum	Types type;
+	char	*str;
+	int	int_val;
+}   t_token ;
 
 typedef struct	t_env
 {
@@ -35,7 +58,7 @@ typedef struct	t_env
 extern volatile sig_atomic_t g_signal;
 
 /* 사용자 구현 부분 */
-char    **tokenize(char *line);
+token_t    **tokenize(char *line);
 void    execute(char **args);
 void    free_tokens(char **args);
 
