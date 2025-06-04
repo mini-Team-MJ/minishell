@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 23:18:18 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/05/28 14:28:02 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/06/05 00:12:11 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,25 @@ typedef struct	t_env
 	char	*value;
 }	t_env;
 
-/* 전역 시그널 플래그 (최대 1개) */
 extern volatile sig_atomic_t g_signal;
 
-/* 사용자 구현 부분 */
 token_t    **tokenize(char *line);
-void    execute(char **args);
 void    free_tokens(char **args);
 
 void    setup_signals(void);
+
+void	execute(char *line, char ***env);
+
+/* built-in command */
+int		ft_cd(char **argv, char ***env);
+int		ft_echo(char **argv);
+int		ft_env(char **argv, char ***env);
+int		ft_export(char **argv, char ***env);
+int		ft_pwd(char **argv);
+int		ft_unset(char **argv, char ***env);
+int     ft_exit(char **argv, char ***env);
+
+/* utils */
+void	ft_free_2d_array(char **arr);
 
 #endif

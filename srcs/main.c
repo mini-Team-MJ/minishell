@@ -28,12 +28,14 @@ void setup_signals(void)
     signal(SIGQUIT, SIG_IGN);
 }
 
-int main(void)
+int main(int argc, char **argv, char **envp)
 {
     char    *line;
     char    **args;
+    char    **env;
 
     setup_signals();
+    env = envp;
     while (1)
     {
         line = readline("minishell> ");
@@ -41,14 +43,9 @@ int main(void)
             break ;                   /* Ctrl+D */
         if (*line)
             add_history(line);
-        if (strcmp(line, "exit") == 0)
-        {
-            free(line);
-            break;
-        }
-        args = tokenize(line);      /* 사용자 구현 */
-        execute(args);              /* 사용자 구현 */
-        free_tokens(args);          /* 사용자 구현 */
+        args = tokenize(line);
+        execute(line, &env);
+        free_tokens(args);
         free(line);
     }
     rl_clear_history();

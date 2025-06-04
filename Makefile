@@ -1,60 +1,62 @@
-# Makefile for minishell (no wildcards, parse.c 포함)
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/05/29 15:00:00 by JuHyeon           #+#    #+#              #
+#    Updated: 2025/06/05 00:06:25 by ljh3900          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-NAME        = minishell
+# --------------------------------------------------------------------------- #
+# 기본 설정                                                                   #
+# --------------------------------------------------------------------------- #
 
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -Iincludes -Ilibft
-LDFLAGS     = -lreadline
+NAME    = minishell
+CC      = cc
+CFLAGS  = -Wall -Wextra -Werror -Iincludes -Ilibft
+LDFLAGS = -lreadline
+RM      = rm -f
 
-SRCDIR      = srcs
-OBJDIR      = objs
-LIBFT_DIR   = libft
-LIBFT_LIB   = $(LIBFT_DIR)/libft.a
+OBJDIR  = objs
 
-SRCS        = \
-    srcs/main.c \
-    srcs/utils.c \
-    srcs/parse.c
+SRCS = srcs/main.c \
+       srcs/utils.c \
+       srcs/parse.c \
+       srcs/execute/builtin/ft_echo.c \
+       srcs/execute/builtin/ft_cd.c \
+       srcs/execute/builtin/ft_env.c \
+       srcs/execute/builtin/ft_export.c \
+       srcs/execute/builtin/ft_pwd.c \
+       srcs/execute/builtin/ft_unset.c \
+       srcs/execute/builtin/ft_exit.c \
+       srcs/execute/execute.c
 
-OBJS        = \
-    $(OBJDIR)/main.o \
-    $(OBJDIR)/utils.o \
-    $(OBJDIR)/parse.o
+OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)
 
-.PHONY: all clean fclean re libft
+all: $(NAME)
 
-all: libft $(NAME)
+$(NAME): $(OBJS) libft/libft.a
+	$(CC) $(CFLAGS) $(OBJS) libft/libft.a $(LDFLAGS) -o $(NAME)
 
-# 1) libft 빌드
-libft:
-	@$(MAKE) -C $(LIBFT_DIR)
+libft/libft.a:
+	$(MAKE) -C libft
 
-# 2) minishell 링크
-$(NAME): $(OBJS)
-	@$(CC) $(OBJS) $(LIBFT_LIB) $(LDFLAGS) -o $(NAME)
-
-# --- 개별 소스 컴파일 규칙 ---
-
-$(OBJDIR)/main.o: srcs/main.c includes/minishell.h
-	@mkdir -p $(OBJDIR)
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR)/utils.o: srcs/utils.c includes/minishell.h
-	@mkdir -p $(OBJDIR)
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR)/parse.o: srcs/parse.c includes/minishell.h
-	@mkdir -p $(OBJDIR)
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-# --- 정리 규칙 ---
+$(OBJDIR)/%.o: %.c includes/minishell.h
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@$(RM) -rf $(OBJDIR)
-	@$(MAKE) -C $(LIBFT_DIR) clean
+	$(RM) -r $(OBJDIR)
+	$(MAKE) -C libft clean
 
 fclean: clean
-	@$(RM) -f $(NAME)
-	@$(MAKE) -C $(LIBFT_DIR) fclean
+	$(RM) $(NAME)
+	$(MAKE) -C libft fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re
+.SECONDARY: $(OBJS)
