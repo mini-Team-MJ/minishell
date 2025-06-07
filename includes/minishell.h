@@ -17,7 +17,7 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-
+# include <stdbool.h>
 # define INITIAL_CAP 16
 
 enum	Types
@@ -38,7 +38,15 @@ enum	Types
 	RD_O_APPEND,
 	RD_I,
 	READ_I,
+	FILENAME,
 };
+
+typedef struct t_com
+{
+	size_t	pipe_count;
+	_Atomic bool	has_rd;
+	t_token *tokens;
+}
 
 typedef struct	t_token 
 {
@@ -46,6 +54,9 @@ typedef struct	t_token
 	enum	Types type;
 	char	*str;
 	int	int_val;
+	_Atomic	bool	has_quotes;
+	struct t_token *next;
+	struct t_token *prev;
 }   t_token ;
 
 typedef struct	t_env
@@ -56,7 +67,7 @@ typedef struct	t_env
 
 extern volatile sig_atomic_t g_signal;
 
-token_t    **tokenize(char *line);
+token_t    *tokenize(char *line, t_token *tokens);
 void    free_tokens(char **args);
 
 void    setup_signals(void);
