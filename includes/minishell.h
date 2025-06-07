@@ -23,8 +23,13 @@
 enum	Types
 {
 	WORD,
-	CAT,
+	FILENAME,
 	PIPE,
+	RD_O,
+	RD_O_APPEND,
+	RD_I,
+	READ_I,
+	
 	CD,
 	EXPORT,
 	ENV,
@@ -34,19 +39,25 @@ enum	Types
     	N,
 	PWD,
 	EV,
-	RD_O,
-	RD_O_APPEND,
-	RD_I,
-	READ_I,
-	FILENAME,
 };
+
+typedef struct	t_mshell
+{
+	struct t_com	**commands;
+	
+} t_mshell;
 
 typedef struct t_com
 {
-	size_t	pipe_count;
-	_Atomic bool	has_rd;
-	t_token *tokens;
-}
+	_Atomic	bool	ingnore;
+	_Atomic bool	has_rd_o;
+	_Atomic	bool	has_rd_oa;
+	enum Types	type;
+	char	**strs
+	char	*filename;
+	t_com	*prev;
+	t_com	*next;
+}	t_com;
 
 typedef struct	t_token 
 {
@@ -63,6 +74,7 @@ typedef struct	t_env
 {
 	char	*name;
 	char	*value;
+	t_env	*next;
 }	t_env;
 
 extern volatile sig_atomic_t g_signal;

@@ -262,28 +262,7 @@ t_token    *tokenize(char *line, t_token *tokens)
 int main()
 {
 	t_token *t;
-    t = NULL;
+    	t = NULL;
 	t = tokenize("echo hello asd", t);
     printf("%s", t->next->next->prev->str);
 }
-/*
-char    **tokenize(char *line)
-{
-    size_t  cap;
-    size_t  cnt;
-    char    **tokens;
-    cap = INITIAL_CAP;
-    cnt = 0;
-    if (!line || !*line || line[0] == '\0')
-        return NULL;
-    tokens = (char **)malloc(cap * sizeof(char *));
-    if (!tokens)
-        return NULL;
-    while (line[0])
-    {
-        
-    }
-    return NULL;
-}
-*/
-

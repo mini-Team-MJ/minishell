@@ -1,61 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   create_commands.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/05 18:04:08 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/06/05 18:04:15 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/06/07 16:27:16 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/06/07 16:27:19 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-bool	check_if_rd(t_token *token)
-{
-	if (!token)
-		return (false);
-	if (token->type == RD_O || RD_O_APPEND)
-	{
-		if (!current->next)
-			//handle_error
-		current->next->type = FILENAME;
-		return (true);
-	}
-	return (false);
-}	
-
-void	handle_pwd(t_token **tokens)
-{
-	t_token *current;
-	
-	current = *tokens;
-	if (current->next != PIPE)
-		//handle_error
-	else
-		//exec pwd
-}
-
-void	handle_exit(t_token **tokens)
-{
-	//handle_exit
-}
-
-void	handle_echo(t_token **tokens)
-{
-
-}
-
-
-void	parser(t_token **tokens)
-{
-	if ((*tokens)->type == ECHO)
-		handle_echo(tokens->next);
-	if ((*tokens)->type == PWD)
-		handle_pwd(tokens->next);
-	if
-}
-
-
 
 
 /*
@@ -68,5 +21,39 @@ void	parser(t_token **tokens)
 	7. pass commands to exec functions;
 */
 
+t_com **handle_commands(t_token **tokens, size_t n)
+{
+	t_com	**coms;
+	size_t	i;
+	
+	coms = (t_com **)malloc(n * sizeof(t_com *));
+ 	if (!coms)
+ 		return (NULL);
+ 	
+ 	 
+}
 
+size_t	count_commands(t_tokens **tokens)
+{
+	size_t	res;
+	t_token	*current;
+	
+	res = 1;
+	current = *tokens;
+	while (current->next)
+	{
+		if (current->type == PIPE)
+			res++;
+		current = current->next;
+	}
+	return (res);
+}
 
+void	setup_commands(token_t **tokens)
+{
+	size_t	n;
+	t_com	**commands;
+		
+	n = count_commands(tokens);
+	commands = make_commands(tokens, n)
+}
