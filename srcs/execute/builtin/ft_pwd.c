@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 14:39:26 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/06/04 22:49:57 by ljh3900          ###   ########.fr       */
+/*   Created: 2025/06/08 17:14:26 by ljh3900           #+#    #+#             */
+/*   Updated: 2025/06/08 17:14:43 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	ft_pwd_error(char **argv)
 {
 	if (argv[1])
 	{
-		fprintf(stderr, "pwd: too many arguments\n");
+		ft_putstr_fd("pwd: options are not supported\n", 2);
 		return (1);
 	}
 	return (0);
@@ -24,13 +24,18 @@ static int	ft_pwd_error(char **argv)
 
 int	ft_pwd(char **argv)
 {
-	char	*path;
+	char *cwd;
 
 	if (ft_pwd_error(argv))
 		return (1);
-	path = getenv("PWD");
-	if (!path)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		ft_putstr_fd("pwd: getcwd error\n", 2);
 		return (1);
-	printf("%s\n", path);
+	}
+	ft_putstr_fd(cwd, 1);
+	ft_putchar_fd('\n', 1);
+	free(cwd);
 	return (0);
 }

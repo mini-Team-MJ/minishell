@@ -1,61 +1,65 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   b_echo.c                                           :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 14:39:53 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/06/04 00:09:57 by ljh3900          ###   ########.fr       */
+/*   Created: 2025/06/08 08:21:02 by ljh3900           #+#    #+#             */
+/*   Updated: 2025/06/08 08:23:35 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-static int	is_n_option(char *s)
+static int	is_n_option(const char *s)
 {
-	int	i;
+	int	i = 1;
 
 	if (s[0] != '-' || s[1] != 'n')
 		return (0);
-	i = 1;
-	while (s[++i])
-		if (s[i] != 'n')
-			return (0);
-	return (1);
+	while (s[i] == 'n')
+		i++;
+	return (s[i] == '\0');
 }
 
-static int	print_exit_code()
+static void	print_dollar(const char *arg, t_env *env_list)
 {
-	printf("echo $? +_+ exit_code");
-	return (0);
+	t_env *node;
+
+	if (arg[1] == '?' && arg[2] == '\0')
+	{
+		// TODO: $?
+		return;
+	}
+	node = env_find(env_list, arg + 1);
+	if (node && node->value)
+		ft_putstr_fd(node->value, 1);
 }
 
-int	ft_echo(char **argv)
+int	ft_echo(char **argv, t_env *env_list)
 {
 	int	i;
 	int	print_nl;
 
-	if (argv[1][0] == '$' && argv[1][1] == '?')
-		print_exit_code();
-	else
+	i = 1;
+	print_nl = 1;
+	while (argv[i] && is_n_option(argv[i]))
 	{
-		i = 1;
-		print_nl = 1;
-		while (argv[i] && is_n_option(argv[i]))
-		{
-			print_nl = 0;
-			i++;
-		}
-		while (argv[i])
-		{
-			ft_putstr_fd(argv[i], STDOUT_FILENO);
-			if (argv[i + 1])
-				ft_putchar_fd(' ', STDOUT_FILENO);
-			i++;
-		}
-		if (print_nl)
-			ft_putchar_fd('\n', STDOUT_FILENO);
+		print_nl = 0;
+		i++;
 	}
+	while (argv[i])
+	{
+		if (argv[i][0] == '$')
+			print_dollar(argv[i], env_list);
+		else
+			ft_putstr_fd(argv[i], 1);
+		if (argv[i + 1])
+			ft_putchar_fd(' ', 1);
+		i++;
+	}
+	if (print_nl)
+		ft_putchar_fd('\n', 1);
 	return (0);
 }

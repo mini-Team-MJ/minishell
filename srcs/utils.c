@@ -1,10 +1,20 @@
-/* srcs/utils.c */
-/* 토큰화(tokenize)와 실행(execute)은 직접 구현하세요 */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: juhyeonl <juhyeonl@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/08 17:21:20 by juhyeonl          #+#    #+#             */
+/*   Updated: 2025/06/08 17:31:30 by juhyeonl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-void    free_tokens(char **args)
+void	free_tokens(t_token **args)
 {
-    (void)args;
+	(void)args;
 }
 
 void	ft_free_2d_array(char **arr)
@@ -20,4 +30,11 @@ void	ft_free_2d_array(char **arr)
 		i++;
 	}
 	free(arr);
+}
+
+void	err_with_cmd(char *prefix, char *arg, char *suffix)
+{
+	ft_putstr_fd(prefix, 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(suffix, 2);
 }

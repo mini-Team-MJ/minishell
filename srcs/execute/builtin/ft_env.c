@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   b_env.c                                            :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 14:39:34 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/06/01 20:38:26 by ljh3900          ###   ########.fr       */
+/*   Updated: 2025/06/08 01:42:35 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,23 +26,27 @@ static int	check_option(char **argv)
 	return (0);
 }
 
-int	ft_env(char **argv, char ***env)
+int	ft_env(char **argv, t_env *env_list)
 {
-	int	i;
+	t_env	*tmp;
 
 	if (argv[1])
 	{
 		if (check_option(argv))
-			fprintf(stderr, "env: options are not supported\n");
+			ft_putstr_fd("env: options are not supported\n", 2);
 		else
-			fprintf(stderr, "env: no arguments expected\n");
+		{
+			ft_putstr_fd("env: '", 2);
+			ft_putstr_fd(argv[1], 2);
+			ft_putstr_fd("': no arguments expected\n", 2);
+		}
 		return (1);
 	}
-	i = 0;
-	while ((*env)[i])
+	tmp = env_list;
+	while (tmp)
 	{
-		printf("%s\n", (*env)[i]);
-		i++;
+		printf("%s=%s\n", tmp->name, tmp->value);
+		tmp = tmp->next;
 	}
 	return (0);
 }

@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 14:39:31 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/06/08 07:55:02 by ljh3900          ###   ########.fr       */
+/*   Created: 2025/06/06 13:11:51 by juhyeonl          #+#    #+#             */
+/*   Updated: 2025/06/08  ##:##:## by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../libft.h"
 
-int ft_unset(char **argv, t_env **env_list)
+int ft_strcmp(const char *s1, const char *s2)
 {
-	int i;
+	unsigned char uc1;
+	unsigned char uc2;
 
-	if (!argv[1])
-		err_with_cmd("unset: ", NULL, "not enough arguments\n");
-	i = 1;
-	while (argv[i])
+	while (*s1 && *s1 == *s2)
 	{
-		if (!is_valid_name(argv[i]))
-			err_with_cmd("unset: '", argv[i], "': not a valid identifier\n");
-		else
-			env_remove(env_list, argv[i]);
-		i++;
+		s1++;
+		s2++;
 	}
-	return (0);
+	uc1 = (unsigned char)*s1;
+	uc2 = (unsigned char)*s2;
+	return (uc1 - uc2);
 }

@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 14:39:31 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/06/08 07:55:02 by ljh3900          ###   ########.fr       */
+/*   Created: 2025/06/08 01:19:28 by ljh3900           #+#    #+#             */
+/*   Updated: 2025/06/08 01:23:31 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../libft.h"
 
-int ft_unset(char **argv, t_env **env_list)
+char	*ft_strndup(const char *src, size_t n)
 {
-	int i;
+	size_t	len;
+	char	*dup;
 
-	if (!argv[1])
-		err_with_cmd("unset: ", NULL, "not enough arguments\n");
-	i = 1;
-	while (argv[i])
-	{
-		if (!is_valid_name(argv[i]))
-			err_with_cmd("unset: '", argv[i], "': not a valid identifier\n");
-		else
-			env_remove(env_list, argv[i]);
-		i++;
-	}
-	return (0);
+	len = 0;
+	while (src[len] && len < n)
+		len++;
+	dup = (char *)malloc(len + 1);
+	if (!dup)
+		return (NULL);
+	while (len--)
+		dup[len] = src[len];
+	dup[ft_strlen(src) < n ? ft_strlen(src) : n] = '\0';
+	return (dup);
 }
