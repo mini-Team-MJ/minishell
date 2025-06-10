@@ -59,12 +59,34 @@ typedef struct	t_token
 	int	int_val;
 }	t_token ;
 
+typedef struct	t_com;
+{
+	int	pipe_fd[2];
+	char	**args;
+	char	*path;
+	enum Types	type;
+	bool	is_piped;
+	bool	has_flag;
+	bool	is_empty;
+	struct t_com	*next;
+	struct t_com	*prev;
+}	t_com;
+
 typedef struct s_env
 {
 	char			*name;
 	char			*value;
 	struct s_env	*next;
 }	t_env;
+
+typedef struct	t_shell
+{
+	struct	t_com  *commands;
+	struct	t_token *tokens;
+	struct	t_env	*envs;
+	char **lines;
+}	t_shell;
+
 
 extern volatile sig_atomic_t g_signal;
 
