@@ -6,7 +6,7 @@
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 23:18:18 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/06/11 21:45:51 by ljh3900          ###   ########.fr       */
+/*   Updated: 2025/06/11 22:14:46 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct	t_token
 	struct t_token *prev;
 }	t_token ;
 
-typedef struct	t_com
+typedef struct	t_com;
 {
 	int	pipe_fd[2];
 	char	**args;
@@ -83,13 +83,12 @@ typedef struct t_env
 	struct t_env	*next;
 }	t_env;
 
-
 typedef struct	t_shell
 {
-	struct t_com	*commands;
-	struct t_token	*tokens;
-	struct t_env	*envs;
-	char			**lines;
+	struct	t_com  *commands;
+	struct	t_token *tokens;
+	struct	t_env	*envs;
+	char **lines;
 	int				last_exit;		// LEE: added it for 'echo $?'
 }	t_shell;
 
