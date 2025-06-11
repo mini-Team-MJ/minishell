@@ -6,19 +6,21 @@
 /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 23:18:18 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/06/08 17:29:37 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/06/11 21:45:51 by ljh3900          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdio.h>
+# include <errno.h>
 # include <signal.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
-# include <stdio.h>
-# include <errno.h>
+# include <stdbool.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
@@ -59,7 +61,7 @@ typedef struct	t_token
 	int	int_val;
 }	t_token ;
 
-typedef struct	t_com;
+typedef struct	t_com
 {
 	int	pipe_fd[2];
 	char	**args;
@@ -72,21 +74,31 @@ typedef struct	t_com;
 	struct t_com	*prev;
 }	t_com;
 
-typedef struct s_env
+typedef struct t_env
 {
 	char			*name;
 	char			*value;
-	struct s_env	*next;
+	struct t_env	*next;
 }	t_env;
+
 
 typedef struct	t_shell
 {
-	struct	t_com  *commands;
-	struct	t_token *tokens;
-	struct	t_env	*envs;
-	char **lines;
+	struct t_com	*commands;
+	struct t_token	*tokens;
+	struct t_env	*envs;
+	char			**lines;
+	int				last_exit;		// LEE: added it for 'echo $?'
 }	t_shell;
 
+// Temporary
+typedef struct t_cmd
+{
+	char **argv;
+	int    fd_in;
+	int    fd_out;
+	int    append;
+}   t_cmd;
 
 extern volatile sig_atomic_t g_signal;
 
@@ -95,7 +107,7 @@ void    free_tokens(t_token **args);
 
 void    setup_signals(void);
 
-void	execute(char *line, t_env **env_list);
+void	execute(char *line, t_shell *sh);
 
 /* utils */
 void	ft_free_2d_array(char **arr);
@@ -106,7 +118,7 @@ void	err_with_cmd(char *prefix, char *arg, char *suffix);
 /***** builtin *****/
 /* built-in-command */
 int		ft_cd(char **argv, t_env **env_list);
-int		ft_echo(char **argv, t_env *env_list);
+int		ft_echo(char **argv, t_env *env_list, int last_exit);
 int		ft_env(char **argv, t_env *env_list);
 int		ft_export(char **argv, t_env **env_list);
 int		ft_pwd(char **argv);
@@ -130,6 +142,13 @@ int		env_remove(t_env **lst, const char *name);
 
 /* cd_resolve_path.c */
 char	*resolve_path(char *arg, t_env *env_list, int *alloc_flag);
+
+/* execute_utils.c */
+bool	is_builtin(const char *cmd);
+int		handle_builtin(char **argv, t_env **env_list, t_shell *sh);
+
+/* stub_pipline.c */
+int		execute_stub_line(const char *line, t_shell *sh);
 
 #endif
 

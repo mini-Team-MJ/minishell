@@ -31,25 +31,21 @@ void setup_signals(void)
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
-	t_env	*env_list;
-	char	**args;
-
+	t_shell	sh;
 
 	(void)argc;
 	(void)argv;
-	(void)args;
+	sh.commands   = NULL;
+	sh.tokens     = NULL;
+	sh.envs       = env_init(envp);
+	sh.lines      = NULL;
+	sh.last_exit  = 0;
 	setup_signals();
-	env_list = env_init(envp);
-	while (1)
+	while ((line = readline(GRN "minishell> " RESET)))
 	{
-		line = readline(GRN "minishell> " RESET);
-		if (!line)
-			break ;                   /* Ctrl+D */
 		if (*line)
 			add_history(line);
-		// args = tokenize(line);
-		execute(line, &env_list);
-		// free_tokens(args);
+		execute(line, &sh);
 		free(line);
 	}
 	rl_clear_history();

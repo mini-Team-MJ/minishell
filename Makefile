@@ -6,7 +6,7 @@
 #    By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 15:00:00 by JuHyeon           #+#    #+#              #
-#    Updated: 2025/06/08 15:03:32 by ljh3900          ###   ########.fr        #
+#    Updated: 2025/06/11 20:59:25 by ljh3900          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,18 +19,20 @@ RM      = rm -f
 OBJDIR  = objs
 
 SRCS = srcs/main.c \
-       srcs/utils.c \
-       srcs/execute/exe_utils_dir/env_utils.c \
-       srcs/execute/exe_utils_dir/export_unset_utils.c \
-       srcs/execute/exe_utils_dir/cd_resolve_path.c \
-       srcs/execute/builtin/ft_cd.c \
-       srcs/execute/builtin/ft_echo.c \
-       srcs/execute/builtin/ft_env.c \
-       srcs/execute/builtin/ft_exit.c \
-       srcs/execute/builtin/ft_export.c \
-       srcs/execute/builtin/ft_pwd.c \
-       srcs/execute/builtin/ft_unset.c \
-       srcs/execute/execute.c
+	srcs/utils.c \
+	srcs/execute/exe_utils_dir/cd_resolve_path.c \
+	srcs/execute/exe_utils_dir/env_utils.c \
+	srcs/execute/exe_utils_dir/execute_utils.c \
+	srcs/execute/exe_utils_dir/export_unset_utils.c \
+	srcs/execute/builtin/ft_cd.c \
+	srcs/execute/builtin/ft_echo.c \
+	srcs/execute/builtin/ft_env.c \
+	srcs/execute/builtin/ft_exit.c \
+	srcs/execute/builtin/ft_export.c \
+	srcs/execute/builtin/ft_pwd.c \
+	srcs/execute/builtin/ft_unset.c \
+	srcs/execute/stub_pipline.c \
+	srcs/execute/execute.c
 
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)
 
