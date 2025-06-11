@@ -57,6 +57,8 @@ typedef struct	t_token
 	enum	Types type;
 	char	*str;
 	int	int_val;
+	struct t_token *next;
+	struct t_token *prev;
 }	t_token ;
 
 typedef struct	t_com;
