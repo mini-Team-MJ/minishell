@@ -10,91 +10,131 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-size_t	count_coms(t_token **tokens)
+size_t  count_args(t_token **tokens)
 {
-	size_t	res;
-	t_token	*current;
-
-	res = 1;
-	current = *tokens;
-	while (current->next)
-	{
-		if (current->type == PIPE)
-			res++;
-	}
-	return (res);
+    size_t  i;
+    t_token *current;
+    
+    current = *tokens;
+    i = 1;
+    while (current->next && current->next->type != PIPE)
+    {
+        i++;
+        current = current->next;
+    }
+    return (i);
 }
 
-size_t	count_args(t_token **tokens)
+size_t  count_coms(t_token **tokens)
 {
-	size_t	i;
-	t_token *current;
-	i = 1;
-	
-	while (current->next && current->type != pipe)
-	{
-		i++;
-		current = current->next;
-	}
-	return (i);
+    size_t  res;
+    t_token *current;
+    
+    res = 1;
+    current = *tokens;
+    while(current->next)
+    {
+        if(current->type == PIPE)
+            res++;
+        current = current->next;
+    }
+    return (res); 
 }
 
-char	**setup_echo_args(t_token **tokens)
+t_com *handle_single(t_token **tokens, t_com **coms)
 {
-	size_t	ac;
-	size_t	i;
-	t_token *current;
-	char	**args;
-
-	ac = count_args(&current);
-	i = 0;
-	args = (char **)malloc(ac * sizeof(char *));	
-	current = *tokens;
-	while (i < ac)
-	{
-		args[i] = ft_strdup(current->str);
-		current = current->next;
-		i++;
-	}
-	return (args);
+    t_com   *new;
+    size_t  n;
+    t_token *current;
+    
+    n = count_args(tokens);
+    new = (t_com *)malloc(1 * sizeof(t_com));
+    new->args = (char **)malloc(n * sizeof(char *));
+    if (!new->args)
+        return NULL;
+    current = *tokens;
+    n = 0;
+    while (current->next)
+    {
+        new->args[n] = custom_dup(current->str);
+        n++;
+        current = current->next;
+    }
+    new->args[n] = custom_dup(current->str);
+    return (new);
 }
 
-t_com	*make_com_echo(t_token **tokens)
+t_com *make_com(t_token **tokens)
 {
-	t_token	*current;
-	t_com	*com;
-	
-	com = (t_com *)malloc(1 * sizeof(t_com));
-	if (!com)
-		return (NULL);
-	current = *tokens;
-	com->type = ECHO;
-	if (current->next->type == N)
-		com->has_flag = true;
-	current = current->next->next;
-	com->args = setup_echo_args(&current); 
-	if (!com->args)
-		return (NULL);
-	return (com);
+    size_t  ac;
+    t_token *current;
+    t_com   *new;
+    size_t  i;
+    
+    if (!*tokens)
+        exit(1);
+    ac = count_args(tokens);
+    new = (t_com *)malloc(1 * sizeof(t_com));
+    new->args = (char **)malloc(ac *sizeof(char *));
+    current = *tokens;
+    i = 0;
+    while(i < ac)
+    {
+        new->args[i] = custom_dup(current->str);
+        current = current->next;
+        i++;
+    }
+    return (new);
 }
 
-void	add_coms(t_com **com_lst, t_com *new)
+void    add_com(t_com *new, t_com **coms)
 {
-	t_com	*current;
+    t_com *current;
 
-	if (!*com_lst)
-		(*com_lst) = new;
-	current = *com_lst;
-	while (current->next)
-		current = current->next;
-	current->next = new;
-	new->prev = current;
-
+    current = *coms;
+    if (!*coms)
+    {
+        *coms = new;
+        return ;
+    }
+    while (current->next)
+        current = current->next;
+    current->next = new;
+    new->prev = current;
+    
 }
 
-tcom *make_coms(t_token **tokens, t_com **commands)
+t_com   *make_coms(t_token **tokens, t_com **coms)
 {
-	size_t	n;
-	
-	
+    t_token *current;
+    t_com   *new;
+
+    current = *tokens;
+    new = make_com(tokens);
+    add_com(new, coms);
+    while (current->next)
+    {
+        if (current->type == PIPE)
+        {
+            new = make_com(&current->next);
+            add_com(new, coms);
+        }
+        current = current->next;
+    }
+    return (*coms);
 }
+
+t_com   *init_coms(t_token **tokens, t_com **coms)
+{
+    t_token *current;
+    size_t  cc;
+
+    cc = count_coms(tokens);
+    current = *tokens;
+    if (cc == 1)
+        *coms = handle_single(tokens, coms);
+    else
+        *coms = make_coms(tokens, coms);
+    return (*coms);
+}
+
