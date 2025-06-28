@@ -10,68 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-int ftstrcmp(char *s1, char *s2)
-{
-	size_t  i;
-	i = 0;
-	if (!s1 || !s2)
-		return (0);
-	while (s1[i] || s2[i])
-	{
-		if (s1[i] != s2[i])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-void set_type(t_token *token)
-{
-	if (ftstrcmp("echo", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("cat", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("pwd", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("exit", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("|", token->str))
-		token->type = PIPE;
-	if (ftstrcmp("unset", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("export", token->str))
-		token->type = COMMAND;
-	if (ftstrcmp("-n", token->str))
-		token->type = N;
-	if (ftstrcmp("env", token->str))
-		token->type = EV;
-	if (ftstrcmp(">", token->str))
-		token->type = RD_O;
-	if (ftstrcmp(">>", token->str))
-		token->type = RD_O_APPEND;
-	if (ftstrcmp("<", token->str))
-		token->type = RD_I;
-	if (ftstrcmp("<<", token->str))
-		token->type = READ_I;
-}
-
-int	is_whitespace(char c)
-{
-	return((c == ' ' || c == 9));
-}
-
-char *custom_dup(char *line)
+char *token_dup(char *line, t_token * token)
 {
     size_t  i;
     char    *res;
+    size_t	l;
 
+    l = token_len(line, token);
+    res = (char *)malloc((l + 1) * sizeof(char));
     i = 0;
-    while (!is_whitespace(line[i]) && line[i])
-        i++;
-    res = (char *)malloc((i + 1) * sizeof(char));
-    i = 0;
-    while(!is_whitespace(line[i]) && line[i])
+    while (i < l)
     {
         res[i] = line[i];
         i++;
@@ -85,13 +33,17 @@ t_token *make_token(char *line)
     t_token *token;
     
     token = (t_token *)malloc(1 * sizeof(t_token));
-    token->str = custom_dup(line);
+    if (!token)
+    	return (NULL);
+    token->sq = false;
+    token->dq = false;
+    token->str = token_dup(line, token);
     token->next = NULL;
     token->prev = NULL;
-    token->type = WORD;
     set_type(token);
     return (token);
 }
+
 void    add_token(t_token **stack, t_token *new)
 {
     t_token *current;
@@ -99,7 +51,7 @@ void    add_token(t_token **stack, t_token *new)
     if (!*stack)
     {
         *stack = new;
-        return ;
+        return;
     }
     current = *stack;
     while (current->next)
@@ -121,41 +73,23 @@ t_token *tokenize(char *line, t_token **stack)
         if (!is_whitespace(line[i]))
         {
             new = make_token(&line[i]);
+            if(!new)
+            {
+            	//free_stack
+            	return (NULL);
+            }
             add_token(stack, new);
             while (!is_whitespace(line[i]) && line[i])
+            {
+                if(line[i] == 39)
+                    i += handle_sq(&line[i + 1]);
+                if(line[i] == 34)
+                    i += handle_dq(&line[i + 1]);
                 i++;
+            }
         }
         else
             i++;
     }
-    return (*stack);
+    return(*stack);
 }
-
-int main()
-{
-	t_token *t;
-    t = NULL;
-	t = tokenize("echo hello asd", t);
-    printf("%s", t->next->next->prev->str);
-}
-
-/*
-char    **tokenize(char *line)
-{
-    size_t  cap;
-    size_t  cnt;
-    char    **tokens;
-    cap = INITIAL_CAP;
-    cnt = 0;
-    if (!line || !*line || line[0] == '\0')
-        return NULL;
-    tokens = (char **)malloc(cap * sizeof(char *));
-    if (!tokens)
-        return NULL;
-    while (line[0])
-    {
-        
-    }
-    return NULL;
-}
-*/
