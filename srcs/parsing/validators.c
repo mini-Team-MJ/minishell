@@ -17,22 +17,23 @@ bool	line_validator(char *line)
 	i = 0;
 	while (line[i])
 	{
-		if (!is_whitespace(line[i]))
-		{
-			if (line[i] == 39 || line[i] == 34)
-			{
-				
-				if (!q_check_handler(&line[i + 1], line[i]))
-				    return(false);
-				i += q_count_handler(&line[i + 1], line[i]);
-			}		
-			else
-		    {
-				if (is_invalid(line[i]))
-				    return (false);
-		    }
-		}
-		i++;
+	    if (line[i] == 39 || line[i] == 34)
+        {
+            if (!q_check_handler(&line[i + 1], line[i]))
+			    return(false);
+			i += q_count_handler(&line[i + 1], line[i]);
+        }
+        else if (line[i] == '>' || line[i] == '<')
+		 {
+            if (!validate_directors(&line[i]))
+                return (false);
+            i += d_mover(&line[i]);
+		 }
+		 if (is_meta(line[i]))
+	        return (false);
+	     if (line[i] == '|' && line[i + 1] == '|')
+	        return (false);
+		 i++;
 	}
 	return (true);
 }

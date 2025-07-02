@@ -10,6 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+char    *get_sig_val(int lsig)
+{
+    int copy;
+    char *ret;
+    size_t  len;
+    
+    copy = lsig;
+    len = 1;
+    while (copy >= 10)
+    {
+        len++;
+        copy /= 10;
+    }
+    ret = (char *)malloc((len + 1) * sizeof(char));
+    if (!ret)
+        return (NULL);
+    ret[len] = '\0';
+    len--;
+    while(len > 0 && lsig >= 10)
+    {
+        ret[len] = (lsig % 10) + 48;
+        lsig /= 10;
+        len--;
+    }
+    ret[len] = lsig + 48;
+    return (ret);
+}
+
+
 size_t	get_len(char *str)
 {
 	size_t	i;
@@ -59,4 +88,19 @@ size_t	custom_len(char *line)
     		i++;
 	}
     return (i);
+}
+
+size_t  d_mover(char *line)
+{
+	size_t  res;
+	char    c;
+
+	res = 0;
+	if (!line)
+		return (res);
+	c = line[res];
+	while(line[res] == c)
+		res++;
+	res--;
+	return(res);
 }

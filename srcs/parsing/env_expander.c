@@ -62,7 +62,9 @@ char	*custom_join(char *arg, char *env, bool is_first)
 	size_t	i;
 	size_t	j;
 	char	*res;
-	
+
+    if (!env)
+        return (NULL);
 	i = get_arg_len(arg);
 	j = get_len(env);
 	res = (char *)malloc((i + j + 1) * sizeof(char));
@@ -74,16 +76,49 @@ char	*custom_join(char *arg, char *env, bool is_first)
 	return (res);
 }
 
-
-char	*parse_env(char *str, char *name,  t_env **envs, bool is_first)
+char	*make_name(char *str)
 {
+	size_t	i;
 	char	*ret;
-	t_env	*env;
-
-	env = find_env(name, envs);
-	if (!env)
+	
+	i = 0;
+	if (!str)
 		return (NULL);
-	ret = custom_join(str, env->val, is_first);
+	if (*str == '?')
+		return (custom_dup("?"));
+	while (str[i])
+		i++;
+	ret = (char *)malloc((1 + i) * sizeof(char));
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (str[i] && !is_whitespace(str[i]))
+	{
+		ret[i] = str[i];
+		i++;
+	}
+	ret[i] = '\0';
 	return (ret);
 }
 
+char	*parse_env(char *str, char *name,  t_env **envs, bool is_first, int lsig)
+{
+	char	*ret;
+	t_env	*env;
+	char    *sig_val;
+	
+	if(ftstrcmp(name, "?"))
+	{
+		ret = custom_join(str, get_sig_val(lsig), is_first);
+	}
+	else
+	{
+		env = find_env(name, envs);
+		if (!env)
+			return (NULL);
+		ret = custom_join(str, env->val, is_first);
+	}
+	if (!is_first)
+		free(str);
+	return (ret);
+}

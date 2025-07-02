@@ -39,26 +39,27 @@ size_t	get_arg_len(char *arg)
 	return (l);
 }
 
-char	*make_arg(char *str, t_env **envs)
+char	*make_arg(char *str, t_env **envs, int lsig)
 {
 	size_t	i;
 	char	*arg;
 	char	*name;
 	bool	got_envs;
-	
+
 	got_envs = false;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$')
+		if (str[i] == '$' )
 		{
+			
 			name = make_name(&str[i + 1]);
 			if (!name)
 				return (NULL);
 			if (!got_envs)
-				arg = parse_env(str, name, envs, true);
+				arg = parse_env(str, name, envs, true, lsig);
 			else
-				arg = parse_env(arg, name, envs, false);
+				arg = parse_env(arg, name, envs, false, lsig);
 			free(name);
 			if (!arg)
 				return (arg);

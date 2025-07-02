@@ -26,76 +26,76 @@ size_t  count_coms(t_token **tokens)
     return (res);
 }
 
-t_com *make_com(t_token **tokens, t_env **envs)
+t_com *make_com(t_token **tokens, t_env **envs, int lsig)
 {
-    size_t  ac;
-    t_token *current;
-    t_com   *new;
-    size_t  i;
-    
-    if (!*tokens)
-        exit(1);
-    ac = count_args(tokens);
-    new = (t_com *)malloc(1 * sizeof(t_com));
-    new->args = (char **)malloc(ac *sizeof(char *));
-    current = *tokens;
-    i = 0;
-    while (i < ac)
-    {
-    	if (current->sq)
-        	new->args[i] = custom_dup(current->str);
-        else
-        	new->args[i] = make_arg(current->str, envs);
-        current = current->next;
-        i++;
-    }
-    return (new);
+	size_t  ac;
+	t_token *current;
+	t_com   *new;
+	size_t  i;
+
+	if (!*tokens)
+		exit(1);
+	ac = count_args(tokens);
+	new = (t_com *)malloc(1 * sizeof(t_com));
+	new->args = (char **)malloc(ac *sizeof(char *));
+	current = *tokens;
+	i = 0;
+	while (i < ac)
+	{
+		if (current->sq)
+			new->args[i] = custom_dup(current->str);
+		else
+			new->args[i] = make_arg(current->str, envs, lsig);
+		current = current->next;
+		i++;
+	}
+	return (new);
 }
 
 void    add_com(t_com *new, t_com **coms)
 {
-    t_com *current;
+	t_com *current;
 
-    current = *coms;
-    if (!*coms)
-    {
-        *coms = new;
-        return ;
-    }
-    while (current->next)
-        current = current->next;
-    current->next = new;
-    new->prev = current;
+	current = *coms;
+	if (!*coms)
+	{
+		*coms = new;
+		return ;
+	}
+	while (current->next)
+		current = current->next;
+	current->next = new;
+	new->prev = current;
 }
 
-t_com   *make_coms(t_token **tokens, t_com **coms, t_env **envs)
+t_com   *make_coms(t_token **tokens, t_com **coms, t_env **envs, int lsig)
 {
-    t_token *current;
-    t_com   *new;
+	t_token *current;
+	t_com   *new;
 
-    current = *tokens;
-    new = make_com(tokens, envs);
-    add_com(new, coms);
-    while (current->next)
-    {
-        if (current->type == PIPE)
-        {
-            new = make_com(&current->next, envs);
-            add_com(new, coms);
-        }
-        current = current->next;
-    }
-    return (*coms);
+	current = *tokens;
+	new = make_com(tokens, envs, lsig);
+	add_com(new, coms);
+	while (current->next)
+	{
+		if (current->type == PIPE)
+		{
+			new = make_com(&current->next, envs, lsig);
+			add_com(new, coms);
+		}
+		current = current->next;
+	}
+	return (*coms);
 }
 
-t_com   *init_coms(t_token **tokens, t_com **coms, t_env **envs)
+t_com   *init_coms(t_token **tokens, t_com **coms, t_env **envs, int lsig)
 {
-    t_token *current;
-    size_t  cc;
+	t_token *current;
+	size_t  cc;
 
-    cc = count_coms(tokens);
-    current = *tokens;
-    *coms = make_coms(tokens, coms, envs);
-    return (*coms);
+	cc = count_coms(tokens);
+	current = *tokens;
+	*coms = make_coms(tokens, coms, envs, lsig);
+	return (*coms);
 }
 

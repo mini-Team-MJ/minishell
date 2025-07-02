@@ -64,32 +64,28 @@ void    add_token(t_token **stack, t_token *new)
 
 t_token *tokenize(char *line, t_token **stack)
 {
-    t_token *new;
-    size_t  i;
-    
-    i = 0;
-    while (line[i])
-    {
-        if (!is_whitespace(line[i]))
-        {
-            new = make_token(&line[i]);
-            if(!new)
-            {
-            	//free_stack
-            	return (NULL);
-            }
-            add_token(stack, new);
-            while (!is_whitespace(line[i]) && line[i])
-            {
-                if(line[i] == 39)
-                    i += handle_sq(&line[i + 1]);
-                if(line[i] == 34)
-                    i += handle_dq(&line[i + 1]);
-                i++;
-            }
-        }
-        else
-            i++;
-    }
-    return(*stack);
+	t_token *new;
+	size_t  i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (!is_whitespace(line[i]))
+		{
+			new = make_token(&line[i]);
+			if (!new)
+			{
+				//free_stack
+				return (NULL);
+			}
+			add_token(stack, new);
+		    if (is_rd(line[i]))
+		        i += rd_loop(&line[i]);
+		    else
+		        i += defloop(&line[i]);
+		}
+		else
+			i++;
+	}
+	return(*stack);
 }

@@ -15,11 +15,18 @@ int	is_whitespace(char c)
 	return((c == ' ' || c == 9));
 }
 
-bool	is_invalid(char c)
+bool	is_rd(char c)
+{
+	return ((c == '>' || c == '<'));
+}
+
+bool	is_meta(char c)
 {
 	if (c == 92)
 		return (true);
 	if (c == ';')
+		return (true);
+	if (c == '&')
 		return (true);
 	return (false);
 }
