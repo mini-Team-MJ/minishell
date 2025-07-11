@@ -1,24 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*   str_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/28 16:45:30 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/06/28 16:45:34 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/07/10 17:26:14 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/07/10 17:26:17 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-int	is_whitespace(char c)
-{
-	return((c == ' ' || c == 9));
-}
-
-bool	is_rd(char c)
-{
-	return ((c == '>' || c == '<'));
-}
 
 bool	is_meta(char c)
 {
@@ -31,31 +21,42 @@ bool	is_meta(char c)
 	return (false);
 }
 
-bool	check_sq(char *line)
+bool	is_rd(char c)
+{
+	return ((c == '>' || c == '<'));
+}
+
+int	is_whitespace(char c)
+{
+	return ((c == ' ' || c == 9));
+}
+
+bool	ftstrcmp(char *s1, char *s2)
 {
 	size_t	i;
 
 	i = 0;
-	while (line[i])
+	if (!s1 || !s2)
+		return (0);
+	while (s1[i] || s2[i])
 	{
-		if (line[i] == 39)
-		   return (true);
+		if (s1[i] != s2[i])
+			return (false);
 		i++;
 	}
-	return (false);
+	return (true);
 }
 
-bool	check_dq(char *line)
+bool	ftstrncmp(char *s1, char *s2, size_t n)
 {
 	size_t	i;
-	
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == 34)
-			return (true);
-		i++;	
-	}
-	return (false);
-}
 
+	i = 0;
+	while ((i < n) && (s1[i] && s2[i]))
+	{
+		if (s1[i] != s2[i])
+			return (false);
+		i++;
+	}
+	return (true);
+}

@@ -5,41 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/28 16:58:11 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/06/28 16:58:15 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/07/10 18:10:18 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/07/10 18:10:21 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-size_t	get_arg_len(char *arg)
-{
-	size_t	l;
-	size_t	i;
-	bool	detected;
-	
-	l = 0;
-	i = 0;
-	detected = false;
-	if (!arg)
-		return (l);
-	while (arg[i])
-	{
-		if (arg[i] == '$' && !detected)
-		{
-			while (arg[i] && !is_whitespace(arg[i]))
-				i++;
-			detected = true;
-		}
-		else
-		{
-			l++;
-			i++;
-		}
-		
-	}
-	return (l);
-}
-
-char	*make_arg(char *str, t_env **envs, int lsig)
+char	*make_arg(char *str, t_shell *shell)
 {
 	size_t	i;
 	char	*arg;
@@ -47,31 +18,61 @@ char	*make_arg(char *str, t_env **envs, int lsig)
 	bool	got_envs;
 
 	got_envs = false;
-	i = 0;
-	while (str[i])
+	i = -1;
+	while (str[++i])
 	{
-		if (str[i] == '$' )
+		if (str[i] == '$')
 		{
-			
 			name = make_name(&str[i + 1]);
-			if (!name)
-				return (NULL);
-			if (!got_envs)
-				arg = parse_env(str, name, envs, true, lsig);
+			if (got_envs)
+				arg = env_parse_handler(str, name, shell, got_envs);
 			else
-				arg = parse_env(arg, name, envs, false, lsig);
-			free(name);
+				arg = env_parse_handler(arg, name, shell, got_envs);
+			got_envs = true;
 			if (!arg)
 				return (arg);
-			got_envs = true;
-			while (str[i] && !is_whitespace(str[i]))
-				i++;
+			i += arg_mover(&str[i]);
 		}
-		else
-			i++;
 	}
 	if (!got_envs)
 		arg = custom_dup(str);
 	return (arg);
 }
 
+char	**args_creation_loop(t_token **tokens, char **args, t_shell
+*shell, size_t ac)
+{
+	size_t	i;
+	t_token	*current;
+
+	i = 0;
+	current = *tokens;
+	while (i < ac)
+	{
+		if (current->sq)
+			args[i] = custom_dup(current->str);
+		else
+			args[i] = make_arg(current->str, shell);
+		if (!args[i])
+		{
+			free_args(args);
+			return (NULL);
+		}
+		current = current->next;
+		i++;
+	}
+	return (args);
+}
+
+char	**make_args(t_token **tokens, t_shell *shell)
+{
+	size_t	ac;
+	char	**args;
+
+	ac = count_args(tokens);
+	args = (char **)malloc(ac * sizeof(char *));
+	if (!args)
+		return (NULL);
+	args = args_creation_loop(tokens, args, shell, ac);
+	return (args);
+}
