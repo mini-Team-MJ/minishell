@@ -12,12 +12,22 @@
 
 bool	is_meta(char c)
 {
+	bool	ret;
+
+	ret = false;
 	if (c == 92)
-		return (true);
+		ret = true;
 	if (c == ';')
-		return (true);
+		ret = true;
 	if (c == '&')
-		return (true);
+		ret = true;
+	if (c == '*')
+		ret = true;
+	if (ret)
+	{
+		print_error("unsupported character\n");
+		return (ret);
+	}
 	return (false);
 }
 

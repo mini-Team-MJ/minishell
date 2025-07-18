@@ -10,6 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+void	setup_directors(t_com *new, t_token **tokens)
+{
+	t_token	*last_in_dir;
+	t_token	*last_o_dir;
+	t_token	*current;
+
+	current = *tokens;
+	last_in_dir = NULL;
+	last_o_dir = NULL;
+	while (current)
+	{
+		if (current->type == RD_I || current->type == READ_I)
+			last_in_dir = current;
+		if (current->type == RD_O || current->type == RD_O_APPEND)
+			last_o_dir = current;
+		current = current->next;
+	}
+	if (last_in_dir)
+	{
+		new->infile = last_in_dir->next->str;
+		new->redir_type_in = true;
+	}
+	if (last_o_dir)
+	{
+		new->outfile = last_o_dir->prev->str;
+		new->redir_type_out = true;
+	}
+}
+
 bool	handle_i(char *str)
 {
 	size_t	i;
@@ -18,13 +47,24 @@ bool	handle_i(char *str)
 	while (str[i])
 	{
 		if (str[i] == '>')
+		{
+			print_error("minishell: unexpected error near 'newline'");
 			return (false);
+		}
 		if (str[i] != '<')
 			break ;
 		i++;
 	}
-	if (i > 2 || !str[i])
+	if (!str[i])
+	{
+		print_error("minishell: unexpected error near 'newline'");
 		return (false);
+	}
+	if (i > 2)
+	{
+		print_error("minishell: syntax error near unexpected token `<'");
+		return (false);
+	}
 	return (check_next(&str[i]));
 }
 
@@ -36,13 +76,24 @@ bool	handle_o(char *str)
 	while (str[i])
 	{
 		if (str[i] == '<')
+		{
+			print_error("minishell: unexpected error near 'newline'");
 			return (false);
+		}
 		if (str[i] != '>')
 			break ;
 		i++;
 	}
-	if (i > 2 || !str[i])
+	if (!str[i])
+	{
+		print_error("minishell: unexpected error near 'newline'");
 		return (false);
+	}
+	if (i > 2)
+	{
+		print_error("minishell: syntax error near unexpected token `>'");
+		return (false);
+	}
 	return (check_next(&str[i]));
 }
 

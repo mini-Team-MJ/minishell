@@ -44,17 +44,10 @@ bool	pipe_check(char *str)
 		return (false);
 	if (str[i] != '|')
 		return (true);
-	while (str[i])
-	{
-		if (is_whitespace(str[i]))
-			i++;
-		else
-		{
-			if (str[i] == '|' || is_meta(str[i]))
-				return (false);
-			break ;
-		}
-	}
+	while (is_whitespace(str[i]))
+		i++;
+	if (str[i] == '|' || is_meta(str[i]))
+		return (false);
 	if (!str[i])
 		return (false);
 	return (true);

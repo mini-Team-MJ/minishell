@@ -54,6 +54,7 @@ bool	check_sq(char *line)
 			return (true);
 		i++;
 	}
+	print_error("error: open quotes aren't supported\n");
 	return (false);
 }
 
@@ -68,5 +69,6 @@ bool	check_dq(char *line)
 			return (true);
 		i++;
 	}
+	print_error("error: open quotes aren't supported\n");
 	return (false);
 }
