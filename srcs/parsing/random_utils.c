@@ -1,24 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_parsing_utils.c                              :+:      :+:    :+:   */
+/*   random_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:28:57 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:28:59 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 21:11:44 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 21:11:47 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parse.h"
 
-bool	q_check_handler(char *line, char q)
+void	setenv_type(t_token *t)
 {
-	bool	ret;
-
-	if (q == 34)
-		ret = check_dq(line);
+	if (ftstrncmp("$?", t->str, 2))
+		t->type = LSIG;
 	else
-		ret = check_sq(line);
-	return (ret);
+		t->type = EV;
+}
+
+int	is_whitespace(char c)
+{
+	return ((c == ' ' || c == 9));
 }
 
 size_t	handle_sq(char *line)
@@ -43,32 +46,7 @@ size_t	handle_dq(char *line)
 	return (i);
 }
 
-bool	check_sq(char *line)
+bool	is_rd(char c)
 {
-	size_t	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == 39)
-			return (true);
-		i++;
-	}
-	print_error("error: open quotes aren't supported\n");
-	return (false);
-}
-
-bool	check_dq(char *line)
-{
-	size_t	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == 34)
-			return (true);
-		i++;
-	}
-	print_error("error: open quotes aren't supported\n");
-	return (false);
+	return ((c == '>' || c == '<'));
 }

@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:25:28 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:25:32 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 21:01:14 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 21:01:17 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parse.h"
 
 void	free_args(char **args)
 {

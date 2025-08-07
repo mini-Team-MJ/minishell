@@ -1,40 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_expander_utils.c                               :+:      :+:    :+:   */
+/*   env_expansion.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 18:06:48 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 18:06:49 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 20:13:10 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 20:13:12 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-size_t	get_len(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	if (!str)
-		return (i);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-size_t	move_env(char *res, char *env)
-{
-	size_t	i;
-
-	i = 0;
-	while (env[i])
-	{
-		res[i] = env[i];
-		i++;
-	}
-	return (i);
-}
-
+#include "parse.h"
 char	*joiner(char *arg, char *env, char *res, char *name)
 {
 	bool	detected;
@@ -110,5 +85,45 @@ char	*get_sig_val(int lsig)
 		len--;
 	}
 	ret[len] = lsig + 48;
+	return (ret);
+}
+
+char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs)
+{
+	char	*ret;
+	t_env	*env;
+	char	*sig_val;
+
+	if (ftstrncmp(name, "?", 1))
+	{
+		sig_val = get_sig_val(shell->lsig);
+		ret = custom_join(str, sig_val, got_envs, "?");
+		free(sig_val);
+	}
+	else
+	{
+		env = find_env(name, &shell->envs);
+		if (!env)
+			return (NULL);
+		ret = custom_join(str, env->value, got_envs, name);
+	}
+	if (got_envs)
+		free(str);
+	return (ret);
+}
+
+char	*env_parse_handler(char *str, char *name, t_shell *shell, bool
+got_envs)
+{
+	char	*ret;
+
+	if (!name)
+	{
+		if (str)
+			free(str);
+		return (NULL);
+	}
+	ret = parse_env(str, name, shell, got_envs);
+	free(name);
 	return (ret);
 }

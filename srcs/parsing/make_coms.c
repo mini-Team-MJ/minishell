@@ -5,10 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 18:11:27 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 18:11:29 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 19:30:08 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 19:34:59 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "parse.h"
 
 t_com	*make_com(t_token **tokens, t_shell *shell)
 {

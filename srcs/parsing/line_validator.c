@@ -1,14 +1,65 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validators.c                                       :+:      :+:    :+:   */
+/*   line_validator.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:41:04 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:41:08 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 21:08:38 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 21:08:41 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parse.h"
+
+bool	check_sq(char *line)
+{
+	size_t	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == 39)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+bool	check_dq(char *line)
+{
+	size_t	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == 34)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+bool	q_check_handler(char *line, char q)
+{
+	bool	ret;
+
+	if (q == 34)
+		ret = check_dq(line);
+	else
+		ret = check_sq(line);
+	return (ret);
+}
+
+size_t	q_count_handler(char *line, char q)
+{
+	size_t	ret;
+
+	if (q == 39)
+		ret = handle_sq(line);
+	else
+		ret = handle_dq(line);
+	return (ret);
+}
 
 bool	line_validator(char *line)
 {
@@ -23,14 +74,6 @@ bool	line_validator(char *line)
 				return (false);
 			i += q_count_handler(&line[i + 1], line[i]);
 		}
-		else if (line[i] == '>' || line[i] == '<')
-		{
-			if (!validate_directors(&line[i]))
-				return (false);
-			i += d_mover(&line[i]);
-		}
-		if (is_meta(line[i]) || !pipe_check(&line[i]))
-			return (false);
 		i++;
 	}
 	return (true);

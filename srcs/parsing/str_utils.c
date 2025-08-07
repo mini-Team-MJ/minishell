@@ -5,42 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:26:14 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:26:17 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 21:02:35 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 21:02:38 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-bool	is_meta(char c)
-{
-	bool	ret;
-
-	ret = false;
-	if (c == 92)
-		ret = true;
-	if (c == ';')
-		ret = true;
-	if (c == '&')
-		ret = true;
-	if (c == '*')
-		ret = true;
-	if (ret)
-	{
-		print_error("unsupported character\n");
-		return (ret);
-	}
-	return (false);
-}
-
-bool	is_rd(char c)
-{
-	return ((c == '>' || c == '<'));
-}
-
-int	is_whitespace(char c)
-{
-	return ((c == ' ' || c == 9));
-}
-
+#include "parse.h"
 bool	ftstrcmp(char *s1, char *s2)
 {
 	size_t	i;
@@ -57,7 +26,7 @@ bool	ftstrcmp(char *s1, char *s2)
 	return (true);
 }
 
-bool	ftstrncmp(char *s1, char *s2, size_t n)
+int	ftstrncmp(char *s1, char *s2, size_t n)
 {
 	size_t	i;
 
@@ -65,8 +34,59 @@ bool	ftstrncmp(char *s1, char *s2, size_t n)
 	while ((i < n) && (s1[i] && s2[i]))
 	{
 		if (s1[i] != s2[i])
-			return (false);
+			return (0);
 		i++;
 	}
-	return (true);
+	return (1);
+}
+
+bool	is_meta(char c)
+{
+	if (c == 92)
+		return (true);
+	if (c == ';')
+		return (true);
+	if (c == '&')
+		return (true);
+	return (false);
+}
+
+size_t	custom_len(char *line)
+{
+	size_t	i;
+
+	if (!line)
+		return (0);
+	i = 0;
+	while (line[i] && !is_whitespace(line[i]))
+	{
+		if (line[i] == 39)
+			i += handle_sq(&line[i + 1]);
+		if (line[i] == 34)
+			i += handle_dq(&line[i + 1]);
+		i++;
+	}
+	return (i);
+}
+
+char	*custom_dup(char *line)
+{
+	size_t	i;
+	char	*res;
+	size_t	l;
+
+	if (!line)
+		return (0);
+	l = custom_len(line);
+	res = (char *)malloc((l + 1) * sizeof(char));
+	if (!res)
+		return (NULL);
+	i = 0;
+	while (i <= l)
+	{
+		res[i] = line[i];
+		i++;
+	}
+	res[i] = '\0';
+	return (res);
 }

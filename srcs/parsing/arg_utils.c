@@ -5,64 +5,51 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:53:40 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:53:42 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 20:36:34 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 20:36:36 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-size_t	custom_len(char *line)
+#include "parse.h"
+
+t_env	*find_env(char *name, t_env **envs)
 {
-	size_t	i;
+	t_env	*current;
 
-	if (!line)
-		return (0);
-	i = 0;
-	while (line[i] && !is_whitespace(line[i]))
+	current = *envs;
+	if (!current)
+		return (false);
+	while (current->next)
 	{
-		if (line[i] == 39)
-			i += handle_sq(&line[i + 1]);
-		if (line[i] == 34)
-			i += handle_dq(&line[i + 1]);
-		i++;
-	}
-	return (i);
-}
-
-char	*custom_dup(char *line)
-{
-	size_t	i;
-	char	*res;
-	size_t	l;
-
-	if (!line)
-		return (0);
-	l = custom_len(line);
-	res = (char *)malloc((l + 1) * sizeof(char));
-	if (!res)
-		return (NULL);
-	i = 0;
-	while (i <= l)
-	{
-		res[i] = line[i];
-		i++;
-	}
-	res[i] = '\0';
-	return (res);
-}
-
-size_t	count_args(t_token **tokens)
-{
-	size_t	i;
-	t_token	*current;
-
-	current = *tokens;
-	i = 1;
-	while (current->next && current->next->type != PIPE)
-	{
-		i++;
+		if (ftstrcmp(name, current->name))
+			return (current);
 		current = current->next;
 	}
-	return (i);
+	if (ftstrcmp(name, current->name))
+		return (current);
+	return (NULL);
+}
+
+char	*make_name(char *str)
+{
+	size_t	i;
+	char	*ret;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	if (*str == '?')
+		return (custom_dup("?"));
+	while (str[i])
+		i++;
+	ret = (char *)malloc((1 + i) * sizeof(char));
+	if (!ret)
+		return (NULL);
+	i = -1;
+	while (str[i++] && !is_whitespace(str[i]))
+		ret[i] = str[i];
+	ret[i] = '\0';
+	return (ret);
 }
 
 size_t	get_arg_len(char *arg)
@@ -93,14 +80,27 @@ size_t	get_arg_len(char *arg)
 	return (l);
 }
 
-size_t	arg_mover(char *str)
+size_t	get_len(char *str)
 {
 	size_t	i;
 
 	i = 0;
 	if (!str)
 		return (i);
-	while (str[i] && !is_whitespace(str[i]))
+	while (str[i])
 		i++;
+	return (i);
+}
+
+size_t	move_env(char *res, char *env)
+{
+	size_t	i;
+
+	i = 0;
+	while (env[i])
+	{
+		res[i] = env[i];
+		i++;
+	}
 	return (i);
 }

@@ -1,14 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenize.c                                         :+:      :+:    :+:   */
+/*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/10 17:19:56 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/07/10 17:19:59 by mhurtamo         ###   ########.fr       */
+/*   Created: 2025/08/07 20:37:54 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/07 20:37:58 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "parse.h"
+
+size_t	token_len(char *line, t_token *token)
+{
+	size_t	i;
+
+	i = 0;
+	if (is_rd(line[i]))
+	{
+		i = handle_rd(line);
+		return (i);
+	}
+	while (!is_whitespace(line[i]) && line[i])
+	{
+		if (line[i] == 39)
+		{
+			i += handle_sq(&line[i + 1]);
+			token->sq = true;
+		}
+		if (line[i] == 34)
+		{
+			i += handle_dq(&line[i + 1]);
+			token->dq = true;
+		}
+		if (is_rd(line[i]))
+			break ;
+		i++;
+	}
+	return (i);
+}
 
 char	*token_dup(char *line, t_token *token)
 {
@@ -75,8 +106,10 @@ t_token	*tokenize(char *line, t_token **stack)
 	t_token	*new;
 	size_t	i;
 
-	i = 0;
-	while (line[i])
+	if (!line_validator(line))
+		return (NULL);
+	i = -1;
+	while (line[++i])
 	{
 		if (!is_whitespace(line[i]))
 		{
@@ -87,13 +120,10 @@ t_token	*tokenize(char *line, t_token **stack)
 				return (NULL);
 			}
 			add_token(stack, new);
-			if (is_rd(line[i]))
-				i += rd_loop(&line[i]);
-			else
-				i += default_loop(&line[i]);
+			i += increment_index(&line[i]);
 		}
-		else
-			i++;
 	}
+	if (!token_validator(stack))
+		free_tokens(stack);
 	return (*stack);
 }
