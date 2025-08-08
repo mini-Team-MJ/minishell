@@ -68,7 +68,10 @@ char	*make_arg(char *str, t_shell *shell)
 		if (str[i] == '$')
 		{
 			name = make_name(&str[i + 1]);
-			arg = env_parse_handler(str, arg, name, shell, got_envs);
+			if (!got_envs)
+				arg = env_parse_handler(str, name, shell, got_envs);
+			else
+				arg = env_parse_handler(arg, name, shell, got_envs);
 			got_envs = true;
 			if (!arg)
 				return (arg);

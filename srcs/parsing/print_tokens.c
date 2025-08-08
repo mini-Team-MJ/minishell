@@ -9,7 +9,7 @@
 /*   Updated: 2025/08/07 19:28:16 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#inlclude "parse.h"
+#include "parse.h"
 
 void	write_str(char *str)
 {

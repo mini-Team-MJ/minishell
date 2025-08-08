@@ -14,10 +14,8 @@
 
 t_com	*make_com(t_token **tokens, t_shell *shell)
 {
-	size_t	ac;
 	t_token	*current;
 	t_com	*new;
-	size_t	i;
 
 	if (!*tokens)
 		exit(1);

@@ -150,8 +150,7 @@ char	*joiner(char *arg, char *env, char *res, char *name);
 char	*custom_join(char *arg, char *env, bool got_envs, char *name);
 char	*get_sig_val(int lsig);
 char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs);
-char	*env_parse_handler(char *str, char *name, t_shell *shell, bool
-got_envs);
+char	*env_parse_handler(char *str, char *name, t_shell *shell, bool got_envs);
 
 size_t	count_args(t_token **tokens);
 size_t	count_coms(t_token **tokens);
