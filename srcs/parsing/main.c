@@ -18,7 +18,7 @@ int main()
 	t_shell	shell;
 	shell.envs = e;
 	shell.lsig = 240;
-	char *abc = "testing > asd > $world";
+	char *abc = "/home/mhurtamo/ms2/minishell/srcs/parsin > asd > $world";
 	t = NULL;
 	c = NULL;
 	shell.tokens = tokenize(abc, &t);

@@ -11,6 +11,19 @@
 /* ************************************************************************** */
 #include "parse.h"
 
+bool	check_if_exists(t_token *token)
+{
+	bool	ret;
+	if (token->type != PATH && token->type != REL_PATHF)
+		return (true);
+	if (token->type == PATH)
+		ret = is_valid_dir(token->str);
+	else
+		ret = is_valid_file(token);
+	return (ret);
+}
+
+
 bool	does_contain_meta(t_token *token)
 {
 	size_t	i;

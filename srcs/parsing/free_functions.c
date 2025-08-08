@@ -56,6 +56,8 @@ void	free_tokens(t_token **tokens)
 
 	if (!tokens)
 		return ;
+	if (!*tokens)
+		return ;
 	current = *tokens;
 	while (current->next)
 	{

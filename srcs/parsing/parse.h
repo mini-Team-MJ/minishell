@@ -23,7 +23,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
-
+#include <fcntl.h>
 enum	Types
 {
 	WORD,
@@ -161,6 +161,9 @@ void	setup_directors(t_com *new, t_token **tokens);
 t_env	*find_env(char *name, t_env **envs);
 char	*make_name(char *str);
 size_t	get_arg_len(char *arg);
+bool	check_if_exists(t_token *token);
+bool	is_valid_dir(char *path);
+bool	is_valid_file(t_token *token);
 size_t	get_len(char *str);
 size_t	move_env(char *res, char *env);
 

@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS	= main.c arg_utils.c com_utils.c env_expansion.c free_functions.c line_validator.c make_args.c make_coms.c print_tokens.c random_utils.c token_validator.c str_utils.c tokenization.c token_utils.c
+SRCS	= main.c arg_utils.c com_utils.c env_expansion.c free_functions.c line_validator.c make_args.c make_coms.c print_tokens.c random_utils.c token_validator.c str_utils.c tokenization.c token_utils.c path_and_file_validators.c
 HEAD	= ./
 
 OBJS	= ${SRCS:.c=.o}

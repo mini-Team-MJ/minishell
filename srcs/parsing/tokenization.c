@@ -80,6 +80,11 @@ t_token	*make_token(char *line)
 	token->prev = NULL;
 	token->type = WORD;
 	set_type(token);
+	if (!check_if_exists(token))
+	{
+		free(token);
+		return (NULL);
+	}
 	return (token);
 }
 
