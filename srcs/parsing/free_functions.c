@@ -9,8 +9,8 @@
 /*   Updated: 2025/08/07 21:01:17 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
 
+#include "../../includes/minishell.h"
 void	free_args(char **args)
 {
 	size_t	i;
@@ -49,7 +49,7 @@ void	free_coms(t_com **coms)
 	*coms = NULL;
 }
 
-void	free_tokens(t_token **tokens)
+void	free_sh_tokens(t_token **tokens)
 {
 	t_token	*current;
 	t_token	*temp;
@@ -75,6 +75,6 @@ void	free_tokens(t_token **tokens)
 
 void	free_both(t_shell *shell)
 {
-	free_tokens(&shell->tokens);
+	free_sh_tokens(&shell->tokens);
 	free_coms(&shell->commands);
 }

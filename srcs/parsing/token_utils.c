@@ -9,7 +9,8 @@
 /*   Updated: 2025/08/07 20:42:39 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 
 void	set_type(t_token *token)
 {

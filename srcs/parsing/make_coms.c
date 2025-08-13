@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 
 t_com	*make_com(t_token **tokens, t_shell *shell)
 {
@@ -21,7 +22,10 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 		exit(1);
 	new = (t_com *)malloc(1 * sizeof(t_com));
 	if (!new)
+	{
+		print_mem_error("memory allocation error", shell);
 		return (NULL);
+	}
 	current = *tokens;
 	new->type = current->type;
 	new->args = make_args(tokens, shell);

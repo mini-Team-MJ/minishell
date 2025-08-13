@@ -9,8 +9,8 @@
 /*   Updated: 2025/08/07 20:10:04 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
 
+#include "../../includes/minishell.h"
 void	set_com_type(char *str, t_com *token)
 {
 	token->type = WORD;
@@ -116,7 +116,13 @@ char	**make_args(t_token **tokens, t_shell *shell)
 	ac = count_args(tokens);
 	args = (char **)malloc(ac * sizeof(char *));
 	if (!args)
+	{
+		print_mem_error("memory allocation failed", shell);
 		return (NULL);
+	}
 	args = args_creation_loop(tokens, args, shell, ac);
+	args[ac] = NULL;
+	if (!args)
+		print_mem_error("memory allocation failed", shell);
 	return (args);
 }

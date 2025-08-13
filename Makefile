@@ -32,6 +32,21 @@ SRCS = srcs/main.c \
 	srcs/execute/builtin/ft_pwd.c \
 	srcs/execute/builtin/ft_unset.c \
 	srcs/execute/stub_pipline.c \
+	srcs/parsing/arg_utils.c \
+	srcs/parsing/com_utils.c \
+	srcs/parsing/env_expansion.c \
+	srcs/parsing/error_printers.c \
+	srcs/parsing/free_functions.c \
+	srcs/parsing/line_validator.c \
+	srcs/parsing/make_args.c \
+	srcs/parsing/make_coms.c \
+	srcs/parsing/path_and_file_validators.c \
+	srcs/parsing/print_tokens.c \
+	srcs/parsing/random_utils.c \
+	srcs/parsing/str_utils.c \
+	srcs/parsing/tokenization.c \
+	srcs/parsing/token_utils.c \
+	srcs/parsing/token_validator.c \
 	srcs/execute/execute.c
 
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)

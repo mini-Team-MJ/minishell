@@ -9,7 +9,8 @@
 /*   Updated: 2025/08/07 20:13:12 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 char	*joiner(char *arg, char *env, char *res, char *name)
 {
 	bool	detected;
@@ -96,7 +97,7 @@ char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs)
 
 	if (ftstrncmp(name, "?", 1))
 	{
-		sig_val = get_sig_val(shell->lsig);
+		sig_val = get_sig_val(shell->last_exit);
 		ret = custom_join(str, sig_val, got_envs, "?");
 		free(sig_val);
 	}

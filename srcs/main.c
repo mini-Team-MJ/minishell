@@ -1,4 +1,15 @@
-/* srcs/main.c */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_main.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/13 17:52:51 by mhurtamo          #+#    #+#             */
+/*   Updated: 2025/08/13 17:52:55 by mhurtamo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 #include <stdio.h>
 #include <string.h>
@@ -28,6 +39,27 @@ void setup_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+void	print_comms(t_com **coms)
+{
+	t_com *curr;
+	size_t i;
+	i = 0;
+	if(!*coms)
+		return ;
+	curr = *coms;
+	while(curr)
+	{
+		i = 0;
+		while(curr->args[i])
+		{
+			printf("%s \n", curr->args[i]);
+			i++;
+		}
+		curr = curr->next;
+	}
+
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -35,17 +67,21 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	sh.commands   = NULL;
-	sh.tokens     = NULL;
-	sh.envs       = env_init(envp);
-	sh.lines      = NULL;
-	sh.last_exit  = 0;
+	sh.commands = NULL;
+	sh.tokens = NULL;
+	sh.envs = env_init(envp);
+	sh.last_exit = 0;
 	setup_signals();
 	while ((line = readline(GRN "minishell> " RESET)))
 	{
 		if (*line)
 			add_history(line);
-		execute(line, &sh);
+		sh.tokens = tokenize(line, &sh.tokens, &sh);
+		if (sh.tokens && *line)
+			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
+		print_comms(&sh.commands);
+		free_coms(&sh.commands);
+		free_sh_tokens(&sh.tokens);
 		free(line);
 	}
 	rl_clear_history();

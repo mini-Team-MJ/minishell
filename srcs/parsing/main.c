@@ -9,7 +9,8 @@
 /*   Updated: 2025/08/08 17:58:35 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 int main()
 {
 	t_token *t;
@@ -18,12 +19,15 @@ int main()
 	t_shell	shell;
 	shell.envs = e;
 	shell.lsig = 240;
-	char *abc = "/home/mhurtamo/ms2/minishell/srcs/parsin > asd > $world";
+	char *abc = "Hello world <<";
 	t = NULL;
 	c = NULL;
-	shell.tokens = tokenize(abc, &t);
-	if(!shell.tokens)
+	shell.tokens = tokenize(abc, &t, &shell);
+	if (!shell.tokens)
+	{
+		printf("%d", shell.lsig);
 		return(1);
+	}
 	e = (t_env *)malloc(1 * sizeof(t_env));
 	e->name = "world";
 	e->value = "echo";

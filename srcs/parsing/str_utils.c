@@ -9,7 +9,9 @@
 /*   Updated: 2025/08/07 21:02:38 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
+
+#include "../../includes/minishell.h"
+
 bool	ftstrcmp(char *s1, char *s2)
 {
 	size_t	i;
@@ -82,7 +84,7 @@ char	*custom_dup(char *line)
 	if (!res)
 		return (NULL);
 	i = 0;
-	while (i <= l)
+	while (i < l)
 	{
 		res[i] = line[i];
 		i++;

@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
 
+#include "../../includes/minishell.h"
 size_t	count_args(t_token **tokens)
 {
 	size_t	i;

@@ -10,30 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
 
-bool	is_valid_dir(char *path)
+#include "../../includes/minishell.h"
+bool	is_valid_dir(char *path, t_shell *shell)
 {
 	DIR *dir;
 
 	dir = opendir(path);
 	if (!dir)
 	{
-		printf("invalid folder");
+		write_syntax_error("invalid directory", shell);
 		return (false);
 	}
 	closedir(dir);
 	return (true);
 }
 
-bool	is_valid_file(t_token *token)
+bool	is_valid_file(t_token *token, t_shell *shell)
 {
 	int	fd;
 
 	fd = open(token->str, O_RDONLY);
 	if (fd == -1)
 	{
-		printf("invalid file");
+		write_syntax_error("invalid filename", shell);
 		return (false);
 	}
 	close(fd);

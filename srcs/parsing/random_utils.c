@@ -9,8 +9,8 @@
 /*   Updated: 2025/08/07 21:11:47 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
 
+#include "../../includes/minishell.h"
 void	setenv_type(t_token *t)
 {
 	if (ftstrncmp("$?", t->str, 2))

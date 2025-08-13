@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
-
+#include "../../includes/minishell.h"
 t_env	*find_env(char *name, t_env **envs)
 {
 	t_env	*current;

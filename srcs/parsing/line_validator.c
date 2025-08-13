@@ -9,7 +9,8 @@
 /*   Updated: 2025/08/07 21:08:41 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 
 bool	check_sq(char *line)
 {

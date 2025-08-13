@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+
+#include "../../includes/minishell.h"
 
 size_t	token_len(char *line, t_token *token)
 {
@@ -61,18 +62,22 @@ char	*token_dup(char *line, t_token *token)
 	return (res);
 }
 
-t_token	*make_token(char *line)
+t_token	*make_token(char *line, t_shell *shell)
 {
 	t_token	*token;
 
 	token = (t_token *)malloc(1 * sizeof(t_token));
 	if (!token)
+	{
+		print_mem_error("memory allocation failed", shell);
 		return (NULL);
+	}
 	token->sq = false;
 	token->dq = false;
 	token->str = token_dup(line, token);
 	if (!token->str)
 	{
+		print_mem_error("memory allocation failed", shell);
 		free(token);
 		return (NULL);
 	}
@@ -80,7 +85,7 @@ t_token	*make_token(char *line)
 	token->prev = NULL;
 	token->type = WORD;
 	set_type(token);
-	if (!check_if_exists(token))
+	if (!check_if_exists(token, shell))
 	{
 		free(token);
 		return (NULL);
@@ -106,7 +111,7 @@ void	add_token(t_token **stack, t_token *new)
 	new->prev = current;
 }
 
-t_token	*tokenize(char *line, t_token **stack)
+t_token	*tokenize(char *line, t_token **stack, t_shell *shell)
 {
 	t_token	*new;
 	size_t	i;
@@ -118,17 +123,17 @@ t_token	*tokenize(char *line, t_token **stack)
 	{
 		if (!is_whitespace(line[i]))
 		{
-			new = make_token(&line[i]);
+			new = make_token(&line[i], shell);
 			if (!new)
 			{
-				free_tokens(stack);
+				free_sh_tokens(stack);
 				return (NULL);
 			}
 			add_token(stack, new);
 			i += increment_index(&line[i]);
 		}
 	}
-	if (!token_validator(stack))
-		free_tokens(stack);
+	if (!token_validator(stack, shell))
+		free_sh_tokens(stack);
 	return (*stack);
 }

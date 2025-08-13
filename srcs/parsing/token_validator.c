@@ -9,20 +9,20 @@
 /*   Updated: 2025/08/07 20:56:45 by mhurtamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parse.h"
 
-bool	check_if_exists(t_token *token)
+#include "../../includes/minishell.h"
+bool	check_if_exists(t_token *token, t_shell *shell)
 {
 	bool	ret;
+
 	if (token->type != PATH && token->type != REL_PATHF)
 		return (true);
 	if (token->type == PATH)
-		ret = is_valid_dir(token->str);
+		ret = is_valid_dir(token->str, shell);
 	else
-		ret = is_valid_file(token);
+		ret = is_valid_file(token, shell);
 	return (ret);
 }
-
 
 bool	does_contain_meta(t_token *token)
 {
@@ -61,26 +61,34 @@ bool	is_pipe_or_rd(t_token *token)
 	return (false);
 }
 
-bool	token_validator(t_token **tokens)
+bool	token_validator(t_token **tokens, t_shell *shell)
 {
 	t_token	*token;
+	bool	not_present;
 
 	if (!*tokens)
 		return (false);
 	token = *tokens;
-	while (token)
+	not_present = true;
+	while (token && not_present)
 	{
 		if (is_pipe_or_rd(token) && is_pipe_or_rd(token->next))
-			return (false);
+			not_present = false;
 		if (is_pipe_or_rd(token) && !token->next)
-			return (false);
+			not_present = false;
+		if (token->type == HERE_DOC && !token->next)
+			not_present = false;
 		if (is_pipe_or_rd(token) && !token->prev)
-			return (false);
+			not_present = false;
 		if (does_contain_meta(token) && token->type == WORD)
-			return (false);
+			not_present = false;
+		if (!not_present)
+			break ;
 		token = token->next;
 	}
-	return (true);
+	if (!not_present)
+		write_syntax_error("syntax error", shell);
+	return (not_present);
 }
 
 size_t	increment_index(char *line)
