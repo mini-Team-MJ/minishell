@@ -47,6 +47,7 @@ SRCS = srcs/main.c \
 	srcs/parsing/tokenization.c \
 	srcs/parsing/token_utils.c \
 	srcs/parsing/token_validator.c \
+	srcs/parsing/type_setter_utils.c \
 	srcs/execute/execute.c
 
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/minishell.h"
 
 t_com	*make_com(t_token **tokens, t_shell *shell)
@@ -80,7 +79,7 @@ void	expand_env_com_types(t_com **coms)
 {
 	t_com	*current;
 
-	if (!coms)
+	if (!*coms)
 		return ;
 	current = *coms;
 	while (current->next)

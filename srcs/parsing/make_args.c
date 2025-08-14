@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 void	set_com_type(char *str, t_com *token)
 {
 	token->type = WORD;
@@ -36,10 +37,7 @@ void	set_com_type(char *str, t_com *token)
 		token->type = RD_I;
 	if (ftstrcmp("<<", str))
 		token->type = HERE_DOC;
-	if (ftstrncmp("./", str, 2))
-		token->type = REL_PATHF;
-	if (ftstrncmp("/", str, 1))
-		token->type = PATH;
+	com_path_setter(str, token);
 }
 
 size_t	arg_mover(char *str)
@@ -54,7 +52,7 @@ size_t	arg_mover(char *str)
 	return (i);
 }
 
-char	*make_arg(char *str, t_shell *shell)
+char	*make_arg(char *str, t_shell *shell, bool is_dq)
 {
 	size_t	i;
 	char	*arg;
@@ -67,14 +65,14 @@ char	*make_arg(char *str, t_shell *shell)
 	{
 		if (str[i] == '$')
 		{
-			name = make_name(&str[i + 1]);
+			name = make_name(&str[i + 1], is_dq);
 			if (!got_envs)
 				arg = env_parse_handler(str, name, shell, got_envs);
 			else
 				arg = env_parse_handler(arg, name, shell, got_envs);
 			got_envs = true;
 			if (!arg)
-				return (arg);
+				return (NULL);
 			i += arg_mover(&str[i]);
 		}
 	}
@@ -96,7 +94,7 @@ char	**args_creation_loop(t_token **tokens, char **args,
 		if (current->sq)
 			args[i] = custom_dup(current->str);
 		else
-			args[i] = make_arg(current->str, shell);
+			args[i] = make_arg(current->str, shell, current->dq);
 		if (!args[i])
 		{
 			free_args(args);
@@ -112,7 +110,7 @@ char	**make_args(t_token **tokens, t_shell *shell)
 {
 	size_t	ac;
 	char	**args;
-
+	
 	ac = count_args(tokens);
 	args = (char **)malloc(ac * sizeof(char *));
 	if (!args)
@@ -121,8 +119,11 @@ char	**make_args(t_token **tokens, t_shell *shell)
 		return (NULL);
 	}
 	args = args_creation_loop(tokens, args, shell, ac);
-	args[ac] = NULL;
 	if (!args)
+	{	
 		print_mem_error("memory allocation failed", shell);
+		return (NULL);
+	}
+	args[ac] = NULL;
 	return (args);
 }

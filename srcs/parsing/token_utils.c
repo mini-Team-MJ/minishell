@@ -38,10 +38,7 @@ void	set_type(t_token *token)
 		token->type = RD_I;
 	if (ftstrcmp("<<", token->str))
 		token->type = HERE_DOC;
-	if (ftstrncmp("./", token->str, 2))
-		token->type = REL_PATHF;
-	if (ftstrncmp("/", token->str, 1))
-		token->type = PATH;
+	token_path_setter(token->str, token);
 }
 
 ssize_t	count_token_amount(char *line)

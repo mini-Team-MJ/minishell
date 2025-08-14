@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 void	setenv_type(t_token *t)
 {
 	if (ftstrncmp("$?", t->str, 2))

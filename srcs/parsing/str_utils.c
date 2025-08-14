@@ -84,7 +84,7 @@ char	*custom_dup(char *line)
 	if (!res)
 		return (NULL);
 	i = 0;
-	while (i < l)
+	while (i <= l)
 	{
 		res[i] = line[i];
 		i++;

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 bool	check_if_exists(t_token *token, t_shell *shell)
 {
 	bool	ret;
@@ -82,8 +83,6 @@ bool	token_validator(t_token **tokens, t_shell *shell)
 			not_present = false;
 		if (does_contain_meta(token) && token->type == WORD)
 			not_present = false;
-		if (!not_present)
-			break ;
 		token = token->next;
 	}
 	if (!not_present)

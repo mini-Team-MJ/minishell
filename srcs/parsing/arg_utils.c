@@ -11,13 +11,14 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 t_env	*find_env(char *name, t_env **envs)
 {
 	t_env	*current;
 
 	current = *envs;
 	if (!current)
-		return (false);
+		return (NULL);
 	while (current->next)
 	{
 		if (ftstrcmp(name, current->name))
@@ -29,11 +30,46 @@ t_env	*find_env(char *name, t_env **envs)
 	return (NULL);
 }
 
-char	*make_name(char *str)
+bool	has_space(char *str)
+{
+	size_t	i;
+	i = 0;
+	while(str[i])
+	{
+		if(is_whitespace(str[i]))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+void name_s(char *str, char *ret)
+{
+	size_t	i;
+	i = 0;
+	while (str[i] && !is_whitespace(str[i]))
+	{
+		ret[i] = str[i];
+		i++;
+	}
+	ret[i] = '\0';
+}
+
+void name_no_s(char *str, char *ret)
+{
+	size_t	i;
+	i = 0;
+	while (str[i] && !is_separator(str[i + 1]))
+	{
+		ret[i] = str[i];
+		i++;
+	}
+	ret[i - 1] = '\0';
+}
+char	*make_name(char *str, bool is_dq)
 {
 	size_t	i;
 	char	*ret;
-
 	i = 0;
 	if (!str)
 		return (NULL);
@@ -44,10 +80,10 @@ char	*make_name(char *str)
 	ret = (char *)malloc((1 + i) * sizeof(char));
 	if (!ret)
 		return (NULL);
-	i = -1;
-	while (str[i++] && !is_whitespace(str[i]))
-		ret[i] = str[i];
-	ret[i] = '\0';
+	if (!has_space(str) && is_dq)
+		name_no_s(str, ret);
+	else
+		name_s(str, ret);
 	return (ret);
 }
 

@@ -24,19 +24,17 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
-#include <dirent.h>
-#include <unistd.h>
-#include <fcntl.h>
+# include <dirent.h>
+# include <unistd.h>
+# include <fcntl.h>
 
 # define INITIAL_CAP 16
 # define TRUE 1
 # define FALSE 0
+# define GRN  "\033[1;32m"
+# define RESET "\033[0m"
 
-#define GRN  "\033[1;32m"
-#define RESET "\033[0m"
-
-
-enum	Types
+enum	e_Types
 {
 	WORD,
 	PIPE,
@@ -46,7 +44,7 @@ enum	Types
 	ECHO,
 	UNSET,
 	EXIT,
-    	N,
+	N,
 	PWD,
 	EV,
 	RD_O,
@@ -58,10 +56,10 @@ enum	Types
 	LSIG,
 };
 
-typedef struct	t_token 
+typedef struct t_token
 {
 	size_t	id;
-	enum	Types type;
+	enum	e_Types	type;
 	char	*str;
 	int	int_val;
 	bool    sq;
@@ -70,14 +68,14 @@ typedef struct	t_token
 	struct t_token *prev;
 }	t_token;
 
-typedef struct	t_com
+typedef struct t_com
 {
 	int	pipe_fd[2];
 	char	**args;
 	char	*path;
 	char	*infile;
 	char	*outfile;
-	enum Types	type;
+	enum e_Types	type;
 	bool	is_piped;
 	bool	redir_type_in;
 	bool	redir_type_out;
@@ -160,7 +158,6 @@ int		handle_builtin(char **argv, t_env **env_list, t_shell *sh);
 /* stub_pipline.c */
 int		execute_stub_line(const char *line, t_shell *sh);
 
-
 bool	does_contain_meta(t_token *token);
 bool	is_pipe_or_rd(t_token *token);
 bool	token_validator(t_token **tokens, t_shell *shell);
@@ -201,7 +198,7 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell);
 
 void	set_com_type(char *str, t_com *token);
 size_t	arg_mover(char *str);
-char	*make_arg(char *str, t_shell *shell);
+char	*make_arg(char *str, t_shell *shell, bool is_dq);
 char	**args_creation_loop(t_token **tokens, char **args,
 	t_shell *shell, size_t ac);
 char	**make_args(t_token **tokens, t_shell *shell);
@@ -230,7 +227,7 @@ void	fill_in_dir(t_com *new, t_token *d);
 void	setup_directors(t_com *new, t_token **tokens);
 
 t_env	*find_env(char *name, t_env **envs);
-char	*make_name(char *str);
+char	*make_name(char *str, bool is_dq);
 size_t	get_arg_len(char *arg);
 bool	check_if_exists(t_token *token, t_shell *shell);
 bool	is_valid_dir(char *path, t_shell *shell);
@@ -239,5 +236,10 @@ size_t	get_len(char *str);
 size_t	move_env(char *res, char *env);
 void	write_syntax_error(char *msg, t_shell *shell);
 void	print_mem_error(char *msg, t_shell *shell);
+void	com_path_setter(char *str, t_com *token);
+void	token_path_setter(char *str, t_token *token);
+void	init_token_vals(t_token *token);
+bool	is_separator(char c);
+
 #endif
 

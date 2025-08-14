@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/minishell.h"
 
 size_t	token_len(char *line, t_token *token)
@@ -72,8 +71,7 @@ t_token	*make_token(char *line, t_shell *shell)
 		print_mem_error("memory allocation failed", shell);
 		return (NULL);
 	}
-	token->sq = false;
-	token->dq = false;
+	init_token_vals(token);
 	token->str = token_dup(line, token);
 	if (!token->str)
 	{
@@ -81,8 +79,6 @@ t_token	*make_token(char *line, t_shell *shell)
 		free(token);
 		return (NULL);
 	}
-	token->next = NULL;
-	token->prev = NULL;
 	token->type = WORD;
 	set_type(token);
 	if (!check_if_exists(token, shell))

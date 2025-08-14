@@ -64,12 +64,15 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_shell	sh;
-
+	t_env *env = (t_env *)malloc(1 * sizeof(t_env *));
 	(void)argc;
 	(void)argv;
+	(void)envp;
+	env->name = "World";
+	env->value = "Hello";
 	sh.commands = NULL;
 	sh.tokens = NULL;
-	sh.envs = env_init(envp);
+	sh.envs = env;
 	sh.last_exit = 0;
 	setup_signals();
 	while ((line = readline(GRN "minishell> " RESET)))
@@ -80,8 +83,9 @@ int main(int argc, char **argv, char **envp)
 		if (sh.tokens && *line)
 			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
 		print_comms(&sh.commands);
-		free_coms(&sh.commands);
+		//excecute(line, &sh);
 		free_sh_tokens(&sh.tokens);
+		free_coms(&sh.commands);
 		free(line);
 	}
 	rl_clear_history();

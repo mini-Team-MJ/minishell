@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/minishell.h"
+
 bool	is_valid_dir(char *path, t_shell *shell)
 {
-	DIR *dir;
+	DIR	*dir;
 
 	dir = opendir(path);
 	if (!dir)

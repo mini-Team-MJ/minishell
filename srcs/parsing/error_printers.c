@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 void	print_mem_error(char *msg, t_shell *shell)
 {
 	size_t	i;

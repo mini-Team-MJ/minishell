@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 char	*joiner(char *arg, char *env, char *res, char *name)
 {
 	bool	detected;
@@ -20,8 +21,6 @@ char	*joiner(char *arg, char *env, char *res, char *name)
 	detected = false;
 	i = 0;
 	j = 0;
-	if (!res)
-		return (NULL);
 	while (arg[i])
 	{
 		if (arg[i] == '$' && !detected)
@@ -122,6 +121,7 @@ got_envs)
 	{
 		if (str)
 			free(str);
+		print_mem_error("memory allocation failed", shell);
 		return (NULL);
 	}
 	ret = parse_env(str, name, shell, got_envs);

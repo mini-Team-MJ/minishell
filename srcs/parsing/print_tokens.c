@@ -11,15 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-void	init_token_vals(t_token *token)
-{
-	if (!token)
-		return ;
-	token->sq = false;
-	token->dq = false;
-	token->prev = NULL;
-	token->next = NULL;
-}
 
 void	write_syntax_error(char *msg, t_shell *shell)
 {
@@ -31,7 +22,7 @@ void	write_syntax_error(char *msg, t_shell *shell)
 	{
 		write(2, "\n", 1);
 		return ;
-	}	
+	}
 	while (msg[i])
 	{
 		write(2, &msg[i], 1);
