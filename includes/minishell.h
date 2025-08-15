@@ -3,16 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 23:18:18 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/06/11 22:14:46 by ljh3900          ###   ########.fr       */
+/*   Updated: 2025/08/15 17:04:45 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+/* ======================= */
+/*       System Headers    */
+/* ======================= */
 # include <stdio.h>
 # include <errno.h>
 # include <signal.h>
@@ -20,21 +23,35 @@
 # include <unistd.h>
 # include <string.h>
 # include <stdbool.h>
+# include <fcntl.h>
+# include <dirent.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
+
+/* ======================= */
+/*    Third-party libs     */
+/* ======================= */
 # include <readline/readline.h>
 # include <readline/history.h>
-# include "../libft/libft.h"
-# include <dirent.h>
-# include <unistd.h>
-# include <fcntl.h>
 
+/* ======================= */
+/*     Project headers     */
+/* ======================= */
+# include "../libft/libft.h"
+
+/* ======================= */
+/*         Macros          */
+/* ======================= */
 # define INITIAL_CAP 16
 # define TRUE 1
 # define FALSE 0
 # define GRN  "\033[1;32m"
 # define RESET "\033[0m"
 
-enum	e_Types
+/* ======================= */
+/*      Token/Types Enum   */
+/* ======================= */
+enum e_Types
 {
 	WORD,
 	PIPE,
@@ -53,32 +70,36 @@ enum	e_Types
 	HERE_DOC,
 	PATH,
 	REL_PATHF,
-	LSIG,
+	LSIG
 };
 
+/* ======================= */
+/*         Structs         */
+/* ======================= */
 typedef struct t_token
 {
-	size_t	id;
-	enum	e_Types	type;
-	char	*str;
-	int	int_val;
-	bool    sq;
-	bool    dq;
-	struct t_token *next;
-	struct t_token *prev;
+	size_t			id;
+	enum e_Types	type;
+	char			*str;
+	int				int_val;
+	bool			sq;
+	bool			dq;
+	struct t_token	*next;
+	struct t_token	*prev;
 }	t_token;
 
 typedef struct t_com
 {
-	int	pipe_fd[2];
-	char	**args;
-	char	*path;
-	char	*infile;
-	char	*outfile;
+	int				pipe_fd[2];
+	char			**args;
+	char			*path;
+	char			*infile;
+	char			*outfile;
 	enum e_Types	type;
-	bool	is_piped;
-	bool	redir_type_in;
-	bool	redir_type_out;
+	bool			is_piped;
+	bool			redir_type_in;
+	bool			redir_type_out;
+	bool			append; /* TRUE if >> append mode */
 	struct t_com	*next;
 	struct t_com	*prev;
 }	t_com;
@@ -90,74 +111,67 @@ typedef struct t_env
 	struct t_env	*next;
 }	t_env;
 
-typedef struct	t_shell
+typedef struct t_shell
 {
-	struct	t_com  *commands;
-	struct	t_token *tokens;
-	struct	t_env	*envs;
-	char **lines;
-	int				last_exit;		// LEE: added it for 'echo $?'
+	t_com			*commands;
+	t_token			*tokens;
+	t_env			*envs;
+	char			**lines;
+	int				last_exit; /* exit status of last executed pipeline */
 }	t_shell;
 
-// Temporary
+/* Stub command struct (used in temporary executor) */
 typedef struct t_cmd
 {
-	char **argv;
-	int    fd_in;
-	int    fd_out;
-	int    append;
-}   t_cmd;
+	char	**argv;
+	int		fd_in;
+	int		fd_out;
+	int		append;
+}	t_cmd;
 
-extern volatile sig_atomic_t g_signal;
+/* ======================= */
+/*        Globals          */
+/* ======================= */
+extern volatile sig_atomic_t	g_signal;
 
-// t_token    **tokenize(char *line);
-void    free_tokens(t_token **args);
-
-void    setup_signals(void);
-
-void	execute(char *line, t_shell *sh);
-
-/* utils */
+/* ======================= */
+/*     Signals & Utils     */
+/* ======================= */
+void	setup_signals(void);
 void	ft_free_2d_array(char **arr);
 void	err_with_cmd(char *prefix, char *arg, char *suffix);
 
+/* ======================= */
+/*     Execute Layer       */
+/* ======================= */
+/* Entry point */
+int		execute(t_shell *sh);
+/* Pipeline execution */
+int		exec_pipeline(t_shell *sh, t_com *head, int n);
+/* Child process execution */
+void	child_exec(t_com *cmd, t_shell *sh, int i, int n, int prev[2],
+			int next[2]);
+/* Redirections (<, >, >>) */
+int		apply_redirs(t_com *cmd, t_shell *sh);
+/* Run builtin in parent when possible */
+int		run_builtin_parent(t_com *cmd, t_shell *sh);
+/* Wait for all children */
+int		wait_all(pid_t *pids, int n, t_shell *sh);
+/* Pipe and signal utilities */
+void	close_pipe_pair(int p[2]);
+void	set_child_signals(void);
 
-/********** execute **********/
-/***** builtin *****/
-/* built-in-command */
-int		ft_cd(char **argv, t_env **env_list);
-int		ft_echo(char **argv, t_env *env_list, int last_exit);
-int		ft_env(char **argv, t_env *env_list);
-int		ft_export(char **argv, t_env **env_list);
-int		ft_pwd(char **argv);
-int		ft_unset(char **argv, t_env **env_list);
-void	ft_exit(char **argv);
-int		ft_str_isalpha(char *str);
-
-/***** exe_utils_dir *****/
-/* env_utils */
-t_env	*env_new(const char *name, const char *value);
-int		env_add_back(t_env **lst, t_env *new_node);
-void	env_clear(t_env **lst);
-t_env	*env_init(char **envp);
-t_env	*env_find(t_env *lst, const char *name);
-
-/* export_unset_utils */
-int		export_cleanup(char *name, char *value, t_env *node, int ret_code);
-int		is_valid_name(const char *s);
-void	print_export_list(t_env *env);
-int		env_remove(t_env **lst, const char *name);
-
-/* cd_resolve_path.c */
-char	*resolve_path(char *arg, t_env *env_list, int *alloc_flag);
-
-/* execute_utils.c */
+/* Existing execute helpers */
 bool	is_builtin(const char *cmd);
 int		handle_builtin(char **argv, t_env **env_list, t_shell *sh);
+void	run_external(char **argv, t_env *env_list, t_shell *sh);
 
-/* stub_pipline.c */
+/* Stub executor */
 int		execute_stub_line(const char *line, t_shell *sh);
 
+/* ======================= */
+/*        Parsing          */
+/* ======================= */
 bool	does_contain_meta(t_token *token);
 bool	is_pipe_or_rd(t_token *token);
 bool	token_validator(t_token **tokens, t_shell *shell);
@@ -176,13 +190,13 @@ void	add_token(t_token **stack, t_token *new);
 t_token	*tokenize(char *line, t_token **stack, t_shell *shell);
 
 bool	ftstrcmp(char *s1, char *s2);
-int	ftstrncmp(char *s1, char *s2, size_t n);
+int		ftstrncmp(char *s1, char *s2, size_t n);
 bool	is_meta(char c);
 size_t	custom_len(char *line);
 char	*custom_dup(char *line);
 
 void	setenv_type(t_token *t);
-int	is_whitespace(char c);
+int		is_whitespace(char c);
 size_t	handle_sq(char *line);
 size_t	handle_dq(char *line);
 bool	is_rd(char c);
@@ -200,7 +214,7 @@ void	set_com_type(char *str, t_com *token);
 size_t	arg_mover(char *str);
 char	*make_arg(char *str, t_shell *shell, bool is_dq);
 char	**args_creation_loop(t_token **tokens, char **args,
-	t_shell *shell, size_t ac);
+			t_shell *shell, size_t ac);
 char	**make_args(t_token **tokens, t_shell *shell);
 
 bool	check_sq(char *line);
@@ -218,7 +232,8 @@ char	*joiner(char *arg, char *env, char *res, char *name);
 char	*custom_join(char *arg, char *env, bool got_envs, char *name);
 char	*get_sig_val(int lsig);
 char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs);
-char	*env_parse_handler(char *str, char *name, t_shell *shell, bool got_envs);
+char	*env_parse_handler(char *str, char *name, t_shell *shell,
+			bool got_envs);
 
 size_t	count_args(t_token **tokens);
 size_t	count_coms(t_token **tokens);
@@ -241,5 +256,30 @@ void	token_path_setter(char *str, t_token *token);
 void	init_token_vals(t_token *token);
 bool	is_separator(char c);
 
-#endif
+/* ======================= */
+/*        Builtins         */
+/* ======================= */
+int		ft_cd(char **argv, t_env **env_list);
+char	*resolve_path(char *arg, t_env *env_list, int *alloc_flag);
+int		ft_echo(char **argv, t_env *env_list, int last_exit);
+int		ft_env(char **argv, t_env *env_list);
+int		ft_export(char **argv, t_env **env_list);
+int		ft_pwd(char **argv);
+int		ft_unset(char **argv, t_env **env_list);
+void	ft_exit(char **argv);
+int		ft_str_isalpha(char *str);
 
+/* env utils */
+t_env	*env_new(const char *name, const char *value);
+int		env_add_back(t_env **lst, t_env *new_node);
+void	env_clear(t_env **lst);
+t_env	*env_init(char **envp);
+t_env	*env_find(t_env *lst, const char *name);
+
+/* export/unset utils */
+int		export_cleanup(char *name, char *value, t_env *node, int ret_code);
+int		is_valid_name(const char *s);
+void	print_export_list(t_env *env);
+int		env_remove(t_env **lst, const char *name);
+
+#endif
