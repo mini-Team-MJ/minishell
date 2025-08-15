@@ -15,7 +15,10 @@
 void	free_args(char **args)
 {
 	size_t	i;
-
+	if(!args)
+		return;
+	if(!*args)
+		return;
 	i = 0;
 	while (args[i])
 	{
@@ -30,7 +33,7 @@ void	free_coms(t_com **coms)
 	t_com	*current;
 	t_com	*temp;
 
-	if (!coms)
+	if (!*coms)
 		return ;
 	current = *coms;
 	while (current->next)
