@@ -2,114 +2,113 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2025/05/28 16:29:35 by juhyeonl          #+#    #+#             */
-// /*   Updated: 2025/06/11 08:31:22 by ljh3900          ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
-
-// #include "../../includes/minishell.h"
-
-// // DONE : exit, pwd, env, export, unset, cd
-// // TODO : echo($?)
-
-// void	init_external()
-// {
-// 	return ;
-// }
-
-// static int	external_command(char **argv, t_env **env_list)
-// {
-// 	int	exit_code;
-
-// 	(void) argv;
-// 	(void) env_list;
-// 	init_external();
-// 	exit_code = 0;
-// 	return (exit_code);
-// }
-
-// void	execute(char *line, t_env **env_list)
-// {
-// 	char	**argv;
-// 	int		exit_code;
-
-// 	argv = ft_split(line, ' ');
-// 	if (!argv || !argv[0])
-// 		return (ft_free_2d_array(argv));
-// 	exit_code = 0;
-// 	if (is_builtin(argv[0]))
-// 		exit_code = handle_builtin(argv, env_list);
-// 	else
-// 		exit_code = external_command(argv, env_list);
-// 	(void)exit_code;		// TODO: init exit_code function?
-// 	ft_free_2d_array(argv);
-// }
-
+/*                                                    +:+ +:+         +:+     */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/15 16:22:28 by juhyeonl          #+#    #+#             */
+/*   Updated: 2025/08/15 18:09:12 by juhyeonl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
 
-static t_com *create_stub_cmds(char *line)
+// static void	print_tokens_list(t_token *tok)
+// {
+// 	while (tok)
+// 	{
+// 		printf("[TOKEN] id=%zu type=%d str=\"%s\" sq=%d dq=%d\n",
+// 			tok->id, tok->type,
+// 			tok->str ? tok->str : "(null)",
+// 			tok->sq, tok->dq);
+// 		tok = tok->next;
+// 	}
+// }
+
+// /* Print all commands for debugging */
+// static void	print_commands_list(t_com *cmd)
+// {
+// 	int	i;
+
+// 	while (cmd)
+// 	{
+// 		printf("[COMMAND] path=\"%s\" type=%d infile=\"%s\" outfile=\"%s\"",
+// 			cmd->path ? cmd->path : "(null)",
+// 			cmd->type,
+// 			cmd->infile ? cmd->infile : "(null)",
+// 			cmd->outfile ? cmd->outfile : "(null)");
+// 		printf(" append=%d is_piped=%d\n", cmd->append, cmd->is_piped);
+// 		if (cmd->args)
+// 		{
+// 			i = 0;
+// 			while (cmd->args[i])
+// 			{
+// 				printf("   arg[%d] = \"%s\"\n", i, cmd->args[i]);
+// 				i++;
+// 			}
+// 		}
+// 		cmd = cmd->next;
+// 	}
+// }
+
+// /* Print all environment variables for debugging */
+// static void	print_env_list(t_env *env)
+// {
+// 	while (env)
+// 	{
+// 		printf("[ENV] %s=%s\n",
+// 			env->name ? env->name : "(null)",
+// 			env->value ? env->value : "(null)");
+// 		env = env->next;
+// 	}
+// }
+
+// /* Main debug print function */
+// static void	print_shell_state(t_shell *sh)
+// {
+// 	if (!sh)
+// 	{
+// 		printf("[SHELL] (null)\n");
+// 		return ;
+// 	}
+// 	printf("========== SHELL STATE ==========\n");
+// 	printf("last_exit = %d\n", sh->last_exit);
+// 	printf("---- TOKENS ----\n");
+// 	print_tokens_list(sh->tokens);
+// 	printf("---- COMMANDS ----\n");
+// 	print_commands_list(sh->commands);
+// 	printf("---- ENVS ----\n");
+// 	print_env_list(sh->envs);
+// 	printf("=================================\n");
+// }
+
+static int	count_cmds(t_com *cur)
 {
-	t_com *node = ft_calloc(1, sizeof(t_com));
-	if (!node)
-		return NULL;
+	int	n;
 
-	node->pipe_fd[0] = node->pipe_fd[1] = -1;
-	node->args = ft_split(line, ' ');
-	if (!node->args || !node->args[0])
-		return (ft_free_2d_array(node->args), free(node), NULL);
-
-	node->type = WORD;
-	return node;
-}
-static int run_external(char **argv)
-{
-	int status;
-	int exit_code;
-	pid_t pid = fork();
-	if (pid < 0)
-		return (perror("fork"), 1);
-	if (pid == 0)
+	n = 0;
+	while (cur)
 	{
-		execvp(argv[0], argv);
-		perror("execvp");
-		_exit(127);
+		n++;
+		cur = cur->next;
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		exit_code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		exit_code = 128 + WTERMSIG(status);
-	else
-		exit_code = 1;
-	return exit_code;
+	return (n);
 }
 
-static int execute_single(t_com *cmd, t_env **env, t_shell *sh)
+int	execute(t_shell *sh)
 {
-	if (is_builtin(cmd->args[0]))
-		return handle_builtin(cmd->args, env, sh);
-	return run_external(cmd->args);
-}
+	t_com	*cmd;
+	int		n;
 
-void    execute(char *line, t_shell *sh)
-{
-	if (ft_strchr(line, '|') || ft_strchr(line, '<') || ft_strchr(line, '>'))
-	{
-		execute_stub_line(line, sh);
-		return ;
-	}
-	t_com *cmd = create_stub_cmds(line);
+	// print_shell_state(sh);
+	cmd = sh->commands;
 	if (!cmd)
-		return ;
-	int exit_code = execute_single(cmd, &sh->envs, sh);
-	sh->last_exit = exit_code;
-	ft_free_2d_array(cmd->args);
-	free(cmd);
+		return (0);
+	n = count_cmds(cmd);
+	if (n == 1 && is_builtin(cmd->args[0])
+		&& cmd->infile == NULL && cmd->outfile == NULL)
+	{
+		sh->last_exit = run_builtin_parent(cmd, sh);
+		return (sh->last_exit);
+	}
+	return (exec_pipeline(sh, cmd, n));
 }

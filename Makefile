@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+         #
+#    By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 15:00:00 by JuHyeon           #+#    #+#              #
-#    Updated: 2025/06/11 20:59:25 by ljh3900          ###   ########.fr        #
+#    Updated: 2025/08/15 17:06:11 by juhyeonl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,15 @@ SRCS = srcs/main.c \
 	srcs/parsing/token_utils.c \
 	srcs/parsing/token_validator.c \
 	srcs/parsing/type_setter_utils.c \
-	srcs/execute/execute.c
+	srcs/execute/execute.c \
+	srcs/execute/builtin_parent.c \
+	srcs/execute/redir.c \
+	srcs/execute/pipes_utils.c \
+	srcs/execute/signals_child.c \
+	srcs/execute/wait_utils.c \
+	srcs/execute/child.c \
+	srcs/execute/run_external.c \
+	srcs/execute/pipeline.c
 
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)
 

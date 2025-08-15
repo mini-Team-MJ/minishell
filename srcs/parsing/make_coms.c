@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   make_coms.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 19:30:08 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/07 19:34:59 by mhurtamo         ###   ########.fr       */
+/*   Updated: 2025/08/15 16:02:56 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,6 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell)
 	cc = count_coms(tokens);
 	*coms = make_coms(tokens, coms, shell);
 	expand_env_com_types(coms);
+	(void)cc;	// tmp
 	return (*coms);
 }
