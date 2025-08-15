@@ -112,7 +112,7 @@ char	**make_args(t_token **tokens, t_shell *shell)
 	char	**args;
 	
 	ac = count_args(tokens);
-	args = (char **)malloc(ac * sizeof(char *));
+	args = (char **)malloc((ac + 1) * sizeof(char *));
 	if (!args)
 	{
 		print_mem_error("memory allocation failed", shell);

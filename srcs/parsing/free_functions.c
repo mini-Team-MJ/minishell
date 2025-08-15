@@ -28,11 +28,23 @@ void	free_args(char **args)
 	free(args);
 }
 
+void	free_path(t_com *com)
+{
+	if (!com)
+		return ;
+	if (com->infile)
+		free(com->infile);
+	if (com->outfile)
+		free(com->outfile);
+}
+
 void	free_coms(t_com **coms)
 {
 	t_com	*current;
 	t_com	*temp;
 
+	if (!coms)
+		return ;
 	if (!*coms)
 		return ;
 	current = *coms;
@@ -41,9 +53,10 @@ void	free_coms(t_com **coms)
 		temp = current;
 		current = current->next;
 		free_args(temp->args);
-		free(temp->path);
+		free_path(temp);
 		temp->prev = NULL;
-		free(temp);
+		if (temp)
+			free(temp);
 	}
 	*coms = NULL;
 }
@@ -58,17 +71,13 @@ void	free_sh_tokens(t_token **tokens)
 	if (!*tokens)
 		return ;
 	current = *tokens;
-	while (current->next)
+	while (current)
 	{
 		temp = current;
 		current = current->next;
-		free(temp->str);
 		temp->prev = NULL;
 		free(temp);
 	}
-	free(current->str);
-	current->prev = NULL;
-	free(current);
 	*tokens = NULL;
 }
 
