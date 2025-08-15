@@ -15,10 +15,10 @@
 void	free_args(char **args)
 {
 	size_t	i;
-	if(!args)
-		return;
-	if(!*args)
-		return;
+	if (!args)
+		return ;
+	if (!*args)
+		return ;
 	i = 0;
 	while (args[i])
 	{
@@ -36,7 +36,7 @@ void	free_coms(t_com **coms)
 	if (!*coms)
 		return ;
 	current = *coms;
-	while (current->next)
+	while (current)
 	{
 		temp = current;
 		current = current->next;
@@ -44,12 +44,7 @@ void	free_coms(t_com **coms)
 		free(temp->path);
 		temp->prev = NULL;
 		free(temp);
-		current = current->next;
 	}
-	free_args(current->args);
-	free(current->path);
-	current->prev = NULL;
-	free(current);
 	*coms = NULL;
 }
 
