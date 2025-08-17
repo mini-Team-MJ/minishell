@@ -34,9 +34,9 @@ bool	has_space(char *str)
 {
 	size_t	i;
 	i = 0;
-	while(str[i])
+	while (str[i])
 	{
-		if(is_whitespace(str[i]))
+		if (is_whitespace(str[i]))
 			return (true);
 		i++;
 	}
@@ -59,13 +59,21 @@ void name_no_s(char *str, char *ret)
 {
 	size_t	i;
 	i = 0;
-	while (str[i] && !is_separator(str[i + 1]))
+	while (str[i])
 	{
 		ret[i] = str[i];
 		i++;
+		if (str[i] == '$')
+		{
+			i++;
+			break ;
+		}
+		if (is_separator(str[i]))
+			break ;
 	}
 	ret[i - 1] = '\0';
 }
+
 char	*make_name(char *str, bool is_dq)
 {
 	size_t	i;
@@ -73,8 +81,6 @@ char	*make_name(char *str, bool is_dq)
 	i = 0;
 	if (!str)
 		return (NULL);
-	if (*str == '?')
-		return (custom_dup("?"));
 	while (str[i])
 		i++;
 	ret = (char *)malloc((1 + i) * sizeof(char));
@@ -130,7 +136,6 @@ size_t	get_len(char *str)
 size_t	move_env(char *res, char *env)
 {
 	size_t	i;
-
 	i = 0;
 	while (env[i])
 	{

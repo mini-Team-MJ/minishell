@@ -17,6 +17,8 @@ size_t	token_len(char *line, t_token *token)
 	size_t	i;
 
 	i = 0;
+	if (line[i] == '|')
+		return (1);
 	if (is_rd(line[i]))
 	{
 		i = handle_rd(line);
@@ -34,6 +36,8 @@ size_t	token_len(char *line, t_token *token)
 			i += handle_dq(&line[i + 1]);
 			token->dq = true;
 		}
+		if (line[i] == '$')
+			return (i+= handle_dollar(&line[i + 1]));
 		if (is_rd(line[i]))
 			break ;
 		i++;
@@ -81,11 +85,8 @@ t_token	*make_token(char *line, t_shell *shell)
 	}
 	token->type = WORD;
 	set_type(token);
-	if (!check_if_exists(token, shell))
-	{
-		free(token);
-		return (NULL);
-	}
+	if (token->type == EV)
+		token->does_exist = does_env_exist(token, &shell->envs);
 	return (token);
 }
 
@@ -93,6 +94,11 @@ void	add_token(t_token **stack, t_token *new)
 {
 	t_token	*current;
 
+	if (new->type == EV && !new->does_exist)
+	{
+		free(new);
+		return ;
+	}
 	if (!*stack)
 	{
 		*stack = new;
@@ -113,7 +119,10 @@ t_token	*tokenize(char *line, t_token **stack, t_shell *shell)
 	size_t	i;
 
 	if (!line_validator(line))
+	{
+		printf("syntax_error");
 		return (NULL);
+	}
 	i = -1;
 	while (line[++i])
 	{

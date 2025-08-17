@@ -59,9 +59,14 @@ ssize_t	count_token_amount(char *line)
 					i += handle_sq(&line[i + 1]);
 				else if (line[i] == 34)
 					i += handle_dq(&line[i + 1]);
+				if (line[i] == '$' && !is_separator(line[i + 1]))
+				{
+					count++;
+					i += handle_dollar(&line[i + 1]);	
+				}
 				if (is_rd(line[i]) && !is_whitespace(line[i - 1]))
 					count++;
-				if (!is_rd(line[i]) && is_rd(line[i - 1]))
+				if ((!is_rd(line[i]) && is_rd(line[i - 1])) || line[i] == '|')
 					count++;
 			}
 		}
@@ -105,6 +110,12 @@ size_t	defloop(char *line)
 			i += handle_dq(&line[i + 1]);
 		if (is_rd(line[i]))
 			break ;
+		if (line[i] == '$')
+		{
+			i += handle_dollar(&line[i + 1]);
+			break ;
+		}
+		
 		i++;
 	}
 	if (i > 0)

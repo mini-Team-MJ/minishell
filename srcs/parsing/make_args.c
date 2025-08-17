@@ -47,7 +47,7 @@ size_t	arg_mover(char *str)
 	i = 0;
 	if (!str)
 		return (i);
-	while (str[i] && !is_whitespace(str[i]))
+	while (str[i] && !is_whitespace(str[i]) && str[i] != '$')
 		i++;
 	return (i);
 }
@@ -65,7 +65,7 @@ char	*make_arg(char *str, t_shell *shell, bool is_dq)
 	{
 		if (str[i] == '$')
 		{
-			name = make_name(&str[i + 1], is_dq);
+			name = make_name(&str[i], is_dq);
 			if (!got_envs)
 				arg = env_parse_handler(str, name, shell, got_envs);
 			else
@@ -91,7 +91,7 @@ char	**args_creation_loop(t_token **tokens, char **args,
 	current = *tokens;
 	while (i < ac)
 	{
-		if (current->sq)
+		if (current->sq || get_len(current->str) == 1)
 			args[i] = custom_dup(current->str);
 		else
 			args[i] = make_arg(current->str, shell, current->dq);
@@ -119,11 +119,7 @@ char	**make_args(t_token **tokens, t_shell *shell)
 		return (NULL);
 	}
 	args = args_creation_loop(tokens, args, shell, ac);
-	if (!args)
-	{	
-		print_mem_error("memory allocation failed", shell);
-		return (NULL);
-	}
-	args[ac] = NULL;
+	if (args)
+		args[ac] = NULL;
 	return (args);
 }

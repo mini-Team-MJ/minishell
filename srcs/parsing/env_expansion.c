@@ -26,9 +26,9 @@ char	*joiner(char *arg, char *env, char *res, char *name)
 		if (arg[i] == '$' && !detected)
 		{
 			detected = true;
-			j += move_env(&res[j], env);
+			if (env)
+				j += move_env(&res[j], env);
 			i += get_len(name);
-			i++;
 		}
 		else
 			res[j++] = arg[i++];
@@ -37,26 +37,21 @@ char	*joiner(char *arg, char *env, char *res, char *name)
 	return (res);
 }
 
-char	*custom_join(char *arg, char *env, bool got_envs, char *name)
+char	*custom_join(char *arg, char *env, t_shell *shell, char *name)
 {
 	size_t	i;
 	size_t	j;
 	char	*res;
 
-	if (!env)
-		return (NULL);
 	i = get_arg_len(arg);
 	j = get_len(env);
 	res = (char *)malloc((i + j + 1) * sizeof(char));
 	if (!res)
 	{
-		if (got_envs)
-			free(arg);
+		print_mem_error("memory allocation failed", shell);
 		return (NULL);
 	}
 	res = joiner(arg, env, res, name);
-	if (got_envs)
-		free(arg);
 	return (res);
 }
 
@@ -94,18 +89,21 @@ char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs)
 	t_env	*env;
 	char	*sig_val;
 
-	if (ftstrncmp(name, "?", 1))
+	if (ftstrncmp(name, "$?", 2))
 	{
 		sig_val = get_sig_val(shell->last_exit);
-		ret = custom_join(str, sig_val, got_envs, "?");
-		free(sig_val);
+		ret = custom_join(str, sig_val, shell, "?");
+		//free(sig_val);
 	}
+	if (ftstrcmp(name, "$"))
+		ret = custom_join(str, "$", shell, name);
 	else
 	{
 		env = find_env(name, &shell->envs);
 		if (!env)
-			return (NULL);
-		ret = custom_join(str, env->value, got_envs, name);
+			ret = custom_join(str, NULL, shell, name);
+		else
+			ret = custom_join(str, env->value, shell, name);
 	}
 	if (got_envs)
 		free(str);
@@ -116,7 +114,6 @@ char	*env_parse_handler(char *str, char *name, t_shell *shell, bool
 got_envs)
 {
 	char	*ret;
-
 	if (!name)
 	{
 		if (str)

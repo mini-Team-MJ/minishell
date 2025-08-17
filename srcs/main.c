@@ -52,7 +52,7 @@ void	print_comms(t_com **coms)
 		i = 0;
 		while(curr->args[i])
 		{
-			printf("%s \n", curr->args[i]);
+			printf("print args:%s \n", curr->args[i]);
 			i++;
 		}
 		curr = curr->next;
@@ -68,8 +68,8 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	env->name = "World";
-	env->value = "Hello";
+	env->name = "$W";
+	env->value = "minishell";
 	sh.commands = NULL;
 	sh.tokens = NULL;
 	sh.envs = env;
@@ -82,7 +82,6 @@ int main(int argc, char **argv, char **envp)
 		sh.tokens = tokenize(line, &sh.tokens, &sh);
 		if (sh.tokens && *line)
 			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
-		//print_comms(&sh.commands);
 		if (sh.commands)
 			execute(&sh);
 		printf("[DEBUG] : after execute\n");

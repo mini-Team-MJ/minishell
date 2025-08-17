@@ -12,17 +12,22 @@
 
 #include "../../includes/minishell.h"
 
-bool	check_if_exists(t_token *token, t_shell *shell)
+bool	check_if_exists(char *path, t_shell *shell, t_com *com)
 {
-	bool	ret;
 
-	if (token->type != PATH && token->type != REL_PATHF)
+	if (is_valid_file(path))
 		return (true);
-	if (token->type == PATH)
-		ret = is_valid_dir(token->str, shell);
-	else
-		ret = is_valid_file(token, shell);
-	return (ret);
+	if (!is_valid_file(path))
+	{
+		if (is_valid_dir(path))
+		{
+			com->type = DIRECTORY;
+			return (true);
+		}
+		write_syntax_error("invalid directory or filename", shell);
+	}
+	shell->last_exit = 127;
+	return (false);
 }
 
 bool	does_contain_meta(t_token *token)
@@ -97,6 +102,8 @@ size_t	increment_index(char *line)
 	i = 0;
 	if (!line)
 		return (i);
+	if (line[i] == '|')
+		return (1);
 	if (is_rd(line[i]))
 		i += rd_loop(&line[i]);
 	else

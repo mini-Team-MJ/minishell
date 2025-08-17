@@ -69,7 +69,7 @@ enum e_Types
 	RD_I,
 	HERE_DOC,
 	PATH,
-	REL_PATHF,
+	DIRECTORY,
 	LSIG
 };
 
@@ -84,6 +84,7 @@ typedef struct t_token
 	int				int_val;
 	bool			sq;
 	bool			dq;
+	bool			does_exist;
 	struct t_token	*next;
 	struct t_token	*prev;
 }	t_token;
@@ -229,7 +230,7 @@ void	free_sh_tokens(t_token **tokens);
 void	free_both(t_shell *shell);
 
 char	*joiner(char *arg, char *env, char *res, char *name);
-char	*custom_join(char *arg, char *env, bool got_envs, char *name);
+char	*custom_join(char *arg, char *env, t_shell *shell, char *name);
 char	*get_sig_val(int lsig);
 char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs);
 char	*env_parse_handler(char *str, char *name, t_shell *shell,
@@ -240,13 +241,16 @@ size_t	count_coms(t_token **tokens);
 void	fill_o_dir(t_com *new, t_token *d);
 void	fill_in_dir(t_com *new, t_token *d);
 void	setup_directors(t_com *new, t_token **tokens);
+bool	does_env_exist(t_token *token, t_env **envs);
+size_t	handle_dollar(char *line);
+
 
 t_env	*find_env(char *name, t_env **envs);
 char	*make_name(char *str, bool is_dq);
 size_t	get_arg_len(char *arg);
-bool	check_if_exists(t_token *token, t_shell *shell);
-bool	is_valid_dir(char *path, t_shell *shell);
-bool	is_valid_file(t_token *token, t_shell *shell);
+bool	check_if_exists(char *path, t_shell *shell, t_com *com);
+bool	is_valid_dir(char *path);
+bool	is_valid_file(char *str);
 size_t	get_len(char *str);
 size_t	move_env(char *res, char *env);
 void	write_syntax_error(char *msg, t_shell *shell);
