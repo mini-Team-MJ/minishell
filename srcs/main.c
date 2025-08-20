@@ -18,7 +18,7 @@
 
 volatile sig_atomic_t g_signal = 0;
 
-/* 디버깅용 함수 - 임시로 main.c에 추가해서 사용 
+/* 디버깅용 함수 - 임시로 main.c에 추가해서 사용  */
 void debug_print_tokens(t_token *tokens)
 {
 	t_token *current = tokens;
@@ -58,7 +58,7 @@ void debug_print_commands(t_com *commands)
 	}
 	printf("[DEBUG] End commands\n");
 }
-*/
+
 /* SIGINT 핸들러: 새 프롬프트만 출력 */
 static void sigint_handler(int sig)
 {
