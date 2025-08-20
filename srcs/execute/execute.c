@@ -6,26 +6,12 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 15:20:00 by you               #+#    #+#             */
-/*   Updated: 2025/08/20 04:51:44 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:30:08 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../includes/minishell.h"
 
-/*
-** Assumed prototypes declared in minishell.h:
-**   int   _name(const char *name);
-**   int   run_builtin_parent(t_shell *sh, t_com *cmd);
-**   int   run_builtin_parent_with_redirs(t_shell *sh, t_com *cmd);
-**   int   exec_pipeline(t_shell *sh, t_com **first, int ncmds);
-**
-** Data model assumption:
-**   t_com is a linked list node for a pipeline:
-**     cmd -> next -> next ...
-**   Parser stores the head at sh->commands.
-*/
-
-/* count how many commands are chained in a pipeline (linked list) */
 static int	count_pipeline(const t_com *head)
 {
 	int	count;
@@ -39,7 +25,6 @@ static int	count_pipeline(const t_com *head)
 	return (count);
 }
 
-/* detect if this command has any redirection to apply in its own context */
 static int	has_redirs(const t_com *cmd)
 {
 	if (!cmd)
@@ -48,21 +33,13 @@ static int	has_redirs(const t_com *cmd)
 		return (1);
 	if (cmd->outfile && cmd->outfile[0])
 		return (1);
-	if (cmd->append) /* append flag (>>), if the project uses it */
+	if (cmd->heredoc_delimiter && cmd->heredoc_delimiter[0])
 		return (1);
-	/* if you have heredoc or other flags, add checks here */
+	if (cmd->append)
+		return (1);
 	return (0);
 }
 
-/*
-** Single command policy:
-** - builtin:
-**     * without redirs -> run in parent (keeps shell state)
-**     * with redirs    -> run in parent with FD backup/restore
-** - external: delegate to exec_pipeline with n=1 (unified child/exec path)
-**
-** exec_pipeline() is expected to set sh->last_exit after wait().
-*/
 static int	exec_single(t_shell *sh, t_com *cmd)
 {
 	int		status;
@@ -86,14 +63,6 @@ static int	exec_single(t_shell *sh, t_com *cmd)
 	return (exec_pipeline(sh, cmd, 1));
 }
 
-
-/*
-** Entry point:
-** - sh->commands is the head of a linked list (pipeline)
-** - 0 cmd  -> last_exit = 0
-** - 1 cmd  -> exec_single()
-** - >=2 cmd-> exec_pipeline()
-*/
 int	execute(t_shell *sh)
 {
 	int		ncmds;
@@ -110,6 +79,5 @@ int	execute(t_shell *sh)
 	}
 	if (ncmds == 1)
 		return (exec_single(sh, first));
-	/* multi-command pipeline */
 	return (exec_pipeline(sh, first, ncmds));
 }

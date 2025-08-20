@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 00:35:58 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/08/20 04:50:35 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:29:06 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ typedef struct t_com
 	char			*path;
 	char			*infile;
 	char			*outfile;
+	char			*heredoc_delimiter;		// for heredoc
 	enum e_Types	type;
 	bool			is_piped;
 	bool			redir_type_in;
@@ -120,15 +121,6 @@ typedef struct t_shell
 	char			**lines;
 	int				last_exit;
 }	t_shell;
-
-/* Stub command struct (used in temporary executor) */
-typedef struct t_cmd
-{
-	char	**argv;
-	int		fd_in;
-	int		fd_out;
-	int		append;
-}	t_cmd;
 
 /* ======================= */
 /*        Globals          */
@@ -156,9 +148,6 @@ void	set_child_signals(void);
 bool	is_builtin(const char *cmd);
 int		handle_builtin(char **argv, t_env **env_list, t_shell *sh);
 void	run_external(char **argv, t_env *env_list, t_shell *sh);
-
-/* Stub executor */
-int		execute_stub_line(const char *line, t_shell *sh);
 
 /* ======================= */
 /*        Parsing          */

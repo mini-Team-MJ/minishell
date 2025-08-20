@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 19:30:08 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/18 01:57:36 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:39:43 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 		return (NULL);
 	}
 	current = *tokens;
-	(void)current;	// tmp for compile
 	new->args = make_args(tokens, shell);
 	setup_directors(new, tokens);
 	return (new);
