@@ -15,6 +15,7 @@
 void	free_args(char **args)
 {
 	size_t	i;
+
 	if (!args)
 		return ;
 	if (!*args)

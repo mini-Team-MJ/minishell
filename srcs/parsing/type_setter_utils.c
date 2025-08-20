@@ -18,7 +18,7 @@ bool	does_env_exist(t_token *token, t_env **envs)
 
 	if (!*envs)
 		return (false);
-	if(token->dq || token->sq)
+	if (token->dq || token->sq)
 		return (true);
 	current = *envs;
 	if (ftstrcmp(token->str, "$"))
@@ -31,7 +31,6 @@ bool	does_env_exist(t_token *token, t_env **envs)
 	}
 	return (false);
 }
-
 
 void	com_path_setter(char *str, t_com *token)
 {

@@ -48,3 +48,15 @@ bool	is_valid_file(char *str)
 	close(fd);
 	return (true);
 }
+
+size_t	get_len(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	if (!str)
+		return (i);
+	while (str[i])
+		i++;
+	return (i);
+}

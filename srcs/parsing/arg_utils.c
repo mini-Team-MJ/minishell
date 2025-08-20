@@ -30,20 +30,6 @@ t_env	*find_env(char *name, t_env **envs)
 	return (NULL);
 }
 
-bool	has_space(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (is_whitespace(str[i]))
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
 void	name_s(char *str, char *ret)
 {
 	size_t	i;
@@ -70,7 +56,7 @@ char	*make_name(char *str)
 	ret = (char *)malloc((1 + i) * sizeof(char));
 	if (!ret)
 		return (NULL);
-	if(!str[1] || is_separator(str[1]))
+	if (!str[1] || is_separator(str[1]))
 	{
 		ret[0] = '$';
 		ret[1] = '\0';
@@ -109,21 +95,10 @@ size_t	get_arg_len(char *arg)
 	return (l);
 }
 
-size_t	get_len(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	if (!str)
-		return (i);
-	while (str[i])
-		i++;
-	return (i);
-}
-
 size_t	move_env(char *res, char *env)
 {
 	size_t	i;
+
 	i = 0;
 	while (env[i])
 	{

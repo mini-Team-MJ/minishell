@@ -20,7 +20,7 @@ void	set_type(t_token *token)
 		token->type = PWD;
 	if (ftstrcmp("exit", token->str))
 		token->type = EXIT;
-	if (ftstrcmp("|", token->str))
+	if (ftstrcmp("|", token->str) && !token->sq && !token->dq)
 		token->type = PIPE;
 	if (ftstrcmp("unset", token->str))
 		token->type = UNSET;
@@ -30,49 +30,15 @@ void	set_type(t_token *token)
 		token->type = N;
 	if (token->str[0] == '$' && !token->sq)
 		setenv_type(token);
-	if (ftstrcmp(">", token->str))
+	if (ftstrcmp(">", token->str) && !token->sq && !token->dq)
 		token->type = RD_O;
-	if (ftstrcmp(">>", token->str))
+	if (ftstrcmp(">>", token->str) && !token->sq && !token->dq)
 		token->type = RD_O_APPEND;
-	if (ftstrcmp("<", token->str))
+	if (ftstrcmp("<", token->str) && !token->sq && !token->dq)
 		token->type = RD_I;
-	if (ftstrcmp("<<", token->str))
+	if (ftstrcmp("<<", token->str) && !token->sq && !token->dq)
 		token->type = HERE_DOC;
 	token_path_setter(token->str, token);
-}
-
-ssize_t	count_token_amount(char *line)
-{
-	size_t	i;
-	ssize_t	count;
-
-	count = 0;
-	i = 0;
-	while (line[i])
-	{
-		if (!is_whitespace(line[i]))
-		{
-			count++;
-			while (!is_whitespace(line[i]) && line[i])
-			{
-				if (line[i] == 39)
-					i += handle_sq(&line[i + 1]);
-				else if (line[i] == 34)
-					i += handle_dq(&line[i + 1]);
-				if (line[i] == '$' && !is_separator(line[i + 1]))
-				{
-					count++;
-					i += handle_dollar(&line[i + 1]);	
-				}
-				if (is_rd(line[i]) && !is_whitespace(line[i - 1]))
-					count++;
-				if ((!is_rd(line[i]) && is_rd(line[i - 1])) || line[i] == '|')
-					count++;
-			}
-		}
-		i++;
-	}
-	return (count);
 }
 
 size_t	handle_rd(char *line)
@@ -115,7 +81,6 @@ size_t	defloop(char *line)
 			i += handle_dollar(&line[i + 1]);
 			break ;
 		}
-		
 		i++;
 	}
 	if (i > 0)

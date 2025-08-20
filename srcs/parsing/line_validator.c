@@ -34,7 +34,7 @@ bool	check_dq(char *line)
 {
 	size_t	i;
 	size_t	count;
-	
+
 	i = 0;
 	count = 0;
 	while (line[i])
@@ -70,7 +70,7 @@ size_t	q_count_handler(char *line, char q)
 	return (ret);
 }
 
-bool	line_validator(char *line)
+bool	line_validator(char *line, t_shell *shell)
 {
 	size_t	i;
 
@@ -80,7 +80,10 @@ bool	line_validator(char *line)
 		if (line[i] == 39 || line[i] == 34)
 		{
 			if (!q_check_handler(&line[i], line[i]))
+			{
+				write_syntax_error("minishell: unclosed quotes are not supported", shell);
 				return (false);
+			}
 			i += q_count_handler(&line[i + 1], line[i]);
 		}
 		i++;

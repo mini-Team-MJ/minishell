@@ -14,7 +14,6 @@
 
 bool	check_if_exists(char *path, t_shell *shell, t_com *com)
 {
-
 	if (is_valid_file(path))
 		return (true);
 	if (!is_valid_file(path))
@@ -67,6 +66,27 @@ bool	is_pipe_or_rd(t_token *token)
 		return (true);
 	return (false);
 }
+bool	is_token_valid(t_token *token)
+{
+	bool	not_present;
+
+	not_present = true;
+	if (is_pipe_or_rd(token) && is_pipe_or_rd(token->next))
+		not_present = false;
+	if (is_pipe_or_rd(token) && !token->next)
+		not_present = false;
+	if (token->type == HERE_DOC && !token->next)
+		not_present = false;
+	if (!token->sq && !token->dq)
+	{	
+		if (is_pipe_or_rd(token) && !token->prev && token->type != HERE_DOC)
+			not_present = false;
+	}
+	if (does_contain_meta(token) && token->type == WORD)
+		not_present = false;
+	return (not_present);
+
+}
 
 bool	token_validator(t_token **tokens, t_shell *shell)
 {
@@ -79,20 +99,13 @@ bool	token_validator(t_token **tokens, t_shell *shell)
 	not_present = true;
 	while (token && not_present)
 	{
-		if (is_pipe_or_rd(token) && is_pipe_or_rd(token->next))
-			not_present = false;
-		if (is_pipe_or_rd(token) && !token->next)
-			not_present = false;
-		if (token->type == HERE_DOC && !token->next)
-			not_present = false;
-		if (is_pipe_or_rd(token) && !token->prev)
-			not_present = false;
-		if (does_contain_meta(token) && token->type == WORD)
-			not_present = false;
+		not_present = is_token_valid(token);
+		if (!not_present)
+			break ;
 		token = token->next;
 	}
 	if (!not_present)
-		write_syntax_error("syntax error", shell);
+		write_syntax_errord("minshell: syntax error near unexpected token ", token->str, shell);
 	return (not_present);
 }
 

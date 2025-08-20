@@ -32,6 +32,44 @@ void	write_syntax_error(char *msg, t_shell *shell)
 	return ;
 }
 
+void	write_rest(char *m)
+{
+	size_t	i;
+
+	if (!m)
+		return ;
+	i = 0;
+	write(1, "`", 1);
+	while (m[i])
+	{
+		write(1, &m[i], 1);
+		i++;
+	}
+	write(1, "'", 1);
+}
+
+void	write_syntax_errord(char *msg, char *m, t_shell *shell)
+{
+	size_t	i;
+
+	i = 0;
+	shell->last_exit = 2;
+	if (!msg)
+	{
+		write(2, "\n", 1);
+		return ;
+	}
+	while (msg[i])
+	{
+		write(2, &msg[i], 1);
+		i++;
+	}
+	write_rest(m);
+	write(2, "\n", 1);
+	return ;
+}
+
+
 void	write_str(char *str)
 {
 	size_t	i;

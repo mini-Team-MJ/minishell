@@ -169,7 +169,6 @@ bool	token_validator(t_token **tokens, t_shell *shell);
 size_t	increment_index(char *line);
 
 void	set_type(t_token *token);
-ssize_t	count_token_amount(char *line);
 size_t	handle_rd(char *line);
 size_t	rd_loop(char *line);
 size_t	defloop(char *line);
@@ -185,6 +184,8 @@ int		ftstrncmp(char *s1, char *s2, size_t n);
 bool	is_meta(char c);
 size_t	custom_len(char *line);
 char	*custom_dup(char *line);
+void	write_syntax_errord(char *msg, char *m, t_shell *shell);
+
 
 void	setenv_type(t_token *t);
 int		is_whitespace(char c);
@@ -212,7 +213,7 @@ bool	check_sq(char *line);
 bool	check_dq(char *line);
 bool	q_check_handler(char *line, char q);
 size_t	q_count_handler(char *line, char q);
-bool	line_validator(char *line);
+bool	line_validator(char *line, t_shell *shell);
 
 void	free_args(char **args);
 void	free_coms(t_com **coms);
@@ -233,6 +234,9 @@ void	fill_in_dir(t_com *new, t_token *d);
 void	setup_directors(t_com *new, t_token **tokens);
 bool	does_env_exist(t_token *token, t_env **envs);
 size_t	handle_dollar(char *line);
+size_t	token_dub_loop(char *line, t_token *token);
+void	sq_dub(char *line, char *res, size_t l);
+void	dq_dub(char *line, char *res, size_t l);
 
 
 t_env	*find_env(char *name, t_env **envs);

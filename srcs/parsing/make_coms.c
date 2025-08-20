@@ -21,7 +21,7 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 	new = (t_com *)malloc(1 * sizeof(t_com));
 	if (!new)
 	{
-		print_mem_error("memory allocation error", shell);
+		print_mem_error("minishell: memory allocation error", shell);
 		return (NULL);
 	}
 	new->next = NULL;
@@ -85,6 +85,7 @@ t_com	*make_coms(t_token **tokens, t_com **coms, t_shell *shell)
 bool	path_checker(t_com **coms, t_shell *shell)
 {
 	t_com	*current;
+
 	if (!*coms)
 		return (true);
 	current = *coms;
@@ -103,26 +104,10 @@ bool	path_checker(t_com **coms, t_shell *shell)
 	return (true);
 }
 
-void	expand_env_com_types(t_com **coms)
-{
-	t_com	*current;
-
-	if (!*coms)
-		return ;
-	current = *coms;
-	while (current->next)
-	{
-		if (current->type == EV)
-			set_com_type(current->args[0], current);
-		current = current->next;
-	}
-	if (current->type == EV)
-		set_com_type(current->args[0], current);
-}
-
 t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell)
 {
 	size_t	cc;
+
 	if (!tokens)
 		return (NULL);
 	cc = count_coms(tokens);

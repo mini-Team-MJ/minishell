@@ -90,6 +90,7 @@ char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs)
 	char	*ret;
 	t_env	*env;
 	char	*sig_val;
+
 	if (ftstrncmp(name, "?", 1))
 	{
 		sig_val = get_sig_val(shell->last_exit);
@@ -114,6 +115,7 @@ char	*env_parse_handler(char *str, char *name, t_shell *shell, bool
 got_envs)
 {
 	char	*ret;
+
 	if (!name)
 	{
 		if (str)

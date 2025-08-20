@@ -20,79 +20,10 @@ size_t	token_len(char *line, t_token *token)
 	if (line[i] == '|')
 		return (1);
 	if (is_rd(line[i]))
-	{
-		i = handle_rd(line);
-		return (i);
-	}
-	while (!is_whitespace(line[i]) && line[i])
-	{
-		if (line[i] == 39)
-		{
-			i += handle_sq(&line[i + 1]);
-			token->sq = true;
-		}
-		if (line[i] == 34)
-		{
-			i += handle_dq(&line[i + 1]);
-			token->dq = true;
-		}
-		if (line[i] == '$')
-			return (i+= handle_dollar(&line[i + 1]));
-		if (is_rd(line[i]))
-			break ;
-		i++;
-	}
+		return (handle_rd(line));
+	i = token_dub_loop(line, token);
 	return (i);
 }
-
-void	sq_dub(char *line, char *res, size_t l)
-{
-	size_t	i;
-	size_t	j;
-
-	if (!line)
-		return ;
-	i = 0;
-	j = 0;
-	while(i < l)
-	{
-		if (line[i] == 39)
-			i++;
-		else
-		{
-			res[j] = line[i];
-			i++;
-			j++;
-		}
-	}
-	res[j] = '\0';
-}
-
-
-void	dq_dub(char *line, char *res, size_t l)
-{
-	size_t	i;
-	size_t	j;
-
-	if (!line)
-		return ;
-	i = 0;
-	j = 0;
-	while(i < l)
-	{
-		if (line[i] == 34)
-			i++;
-		else
-		{
-			res[j] = line[i];
-			i++;
-			j++;
-		}
-	}
-	res[j] = '\0';
-}
-
-
 
 char	*token_dup(char *line, t_token *token)
 {
@@ -106,21 +37,18 @@ char	*token_dup(char *line, t_token *token)
 		return (NULL);
 	i = 0;
 	if (token->sq)
-	{
 		sq_dub(line, res, l);
-		return (res);
-	}
-	if (token->dq)
-	{
+	else if (token->dq)
 		dq_dub(line, res, l);
-		return (res);
-	}
-	while (i < l)
+	else
 	{
-		res[i] = line[i];
-		i++;
+		while (i < l)
+		{
+			res[i] = line[i];
+			i++;
+		}
+		res[i] = '\0';
 	}
-	res[i] = '\0';
 	return (res);
 }
 
@@ -177,11 +105,8 @@ t_token	*tokenize(char *line, t_token **stack, t_shell *shell)
 	t_token	*new;
 	size_t	i;
 
-	if (!line_validator(line))
-	{
-		printf("syntax_error");
+	if (!line_validator(line, shell))
 		return (NULL);
-	}
 	i = -1;
 	while (line[++i])
 	{
