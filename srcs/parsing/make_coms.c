@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 19:30:08 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/18 01:57:36 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:48:26 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell)
 		return (NULL);
 	cc = count_coms(tokens);
 	*coms = make_coms(tokens, coms, shell);
+	(void)cc;	// tmp for compile
 	if (!path_checker(coms, shell))
 	{
 		free_coms(coms);

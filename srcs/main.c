@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:52:51 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/16 01:55:54 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:51:39 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,47 @@
 
 volatile sig_atomic_t g_signal = 0;
 
+/* 디버깅용 함수 - 임시로 main.c에 추가해서 사용 
+void debug_print_tokens(t_token *tokens)
+{
+	t_token *current = tokens;
+	int i = 0;
+	
+	printf("[DEBUG] Tokens:\n");
+	while (current)
+	{
+		printf("[%d] type=%d, str='%s', sq=%d, dq=%d\n", 
+			i, current->type, current->str ? current->str : "NULL", 
+			current->sq, current->dq);
+		current = current->next;
+		i++;
+	}
+	printf("[DEBUG] End tokens\n");
+}
+
+void debug_print_commands(t_com *commands)
+{
+	t_com *current = commands;
+	int i = 0;
+	
+	printf("[DEBUG] Commands:\n");
+	while (current)
+	{
+		printf("[%d] type=%d, args[0]='%s'\n", 
+			i, current->type, 
+			(current->args && current->args[0]) ? current->args[0] : "NULL");
+		if (current->infile)
+			printf("    infile='%s'\n", current->infile);
+		if (current->outfile)
+			printf("    outfile='%s', append=%d\n", current->outfile, current->append);
+		if (current->heredoc_delimiter)
+			printf("    heredoc_delimiter='%s'\n", current->heredoc_delimiter);
+		current = current->next;
+		i++;
+	}
+	printf("[DEBUG] End commands\n");
+}
+*/
 /* SIGINT 핸들러: 새 프롬프트만 출력 */
 static void sigint_handler(int sig)
 {
@@ -52,7 +93,7 @@ void	print_comms(t_com **coms)
 		i = 0;
 		while(curr->args[i])
 		{
-			printf("print args:%s \n", curr->args[i]);
+			// printf("print args:%s \n", curr->args[i]);
 			i++;
 		}
 		curr = curr->next;
@@ -64,7 +105,7 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_shell	sh;
-	t_env *env = (t_env *)malloc(1 * sizeof(t_env *));
+	t_env *env = (t_env *)malloc(1 * sizeof(t_env));
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -85,13 +126,9 @@ int main(int argc, char **argv, char **envp)
 		print_comms(&sh.commands);
 		if (sh.commands)
 			execute(&sh);
-		// printf("[DEBUG] : after execute\n");
 		free_sh_tokens(&sh.tokens);
-		// printf("[DEBUG] : after free_sh_tokens\n");
 		free_coms(&sh.commands);
-		// printf("[DEBUG] : after free_coms\n");
 		free(line);
-		// printf("[DEBUG] : after free\n");
 	}
 	rl_clear_history();
 	return 0;

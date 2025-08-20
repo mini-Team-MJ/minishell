@@ -6,7 +6,7 @@
 #    By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 15:00:00 by JuHyeon           #+#    #+#              #
-#    Updated: 2025/08/17 18:03:31 by juhyeonl         ###   ########.fr        #
+#    Updated: 2025/08/20 05:21:07 by juhyeonl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,6 @@ SRCS = srcs/main.c \
 	srcs/execute/builtin/ft_export.c \
 	srcs/execute/builtin/ft_pwd.c \
 	srcs/execute/builtin/ft_unset.c \
-	srcs/execute/stub_pipline.c \
 	srcs/parsing/arg_utils.c \
 	srcs/parsing/com_utils.c \
 	srcs/parsing/env_expansion.c \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   com_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 19:36:15 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/07 19:36:19 by mhurtamo         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:40:18 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	fill_o_dir(t_com *new, t_token *d)
 
 void	fill_in_dir(t_com *new, t_token *d)
 {
-	new->infile = d->prev->str;
+	new->infile = d->next->str;
 	new->redir_type_in = true;
 }
 
