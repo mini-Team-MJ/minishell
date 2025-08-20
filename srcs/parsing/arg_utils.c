@@ -33,6 +33,7 @@ t_env	*find_env(char *name, t_env **envs)
 bool	has_space(char *str)
 {
 	size_t	i;
+
 	i = 0;
 	while (str[i])
 	{
@@ -43,11 +44,12 @@ bool	has_space(char *str)
 	return (false);
 }
 
-void name_s(char *str, char *ret)
+void	name_s(char *str, char *ret)
 {
 	size_t	i;
+
 	i = 0;
-	while (str[i] && !is_whitespace(str[i]))
+	while (str[i] && !is_separator(str[i]))
 	{
 		ret[i] = str[i];
 		i++;
@@ -55,29 +57,11 @@ void name_s(char *str, char *ret)
 	ret[i] = '\0';
 }
 
-void name_no_s(char *str, char *ret)
-{
-	size_t	i;
-	i = 0;
-	while (str[i])
-	{
-		ret[i] = str[i];
-		i++;
-		if (str[i] == '$')
-		{
-			i++;
-			break ;
-		}
-		if (is_separator(str[i]))
-			break ;
-	}
-	ret[i - 1] = '\0';
-}
-
-char	*make_name(char *str, bool is_dq)
+char	*make_name(char *str)
 {
 	size_t	i;
 	char	*ret;
+
 	i = 0;
 	if (!str)
 		return (NULL);
@@ -86,10 +70,13 @@ char	*make_name(char *str, bool is_dq)
 	ret = (char *)malloc((1 + i) * sizeof(char));
 	if (!ret)
 		return (NULL);
-	if (!has_space(str) && is_dq)
-		name_no_s(str, ret);
+	if(!str[1] || is_separator(str[1]))
+	{
+		ret[0] = '$';
+		ret[1] = '\0';
+	}
 	else
-		name_s(str, ret);
+		name_s(&str[1], ret);
 	return (ret);
 }
 
@@ -106,10 +93,11 @@ size_t	get_arg_len(char *arg)
 		return (l);
 	while (arg[i])
 	{
-		if (arg[i] == '$' && !detected)
+		if (arg[i] == '$' && !detected && !is_separator(arg[i + 1]))
 		{
-			while (arg[i] && !is_whitespace(arg[i]))
+			while (arg[i] && !is_separator(arg[i]))
 				i++;
+			i++;
 			detected = true;
 		}
 		else

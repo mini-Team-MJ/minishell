@@ -29,7 +29,7 @@ size_t	handle_sq(char *line)
 {
 	size_t	i;
 
-	i = 0;
+	i = 1;
 	while (line[i] != 39 && line[i])
 		i++;
 	i++;
@@ -40,7 +40,7 @@ size_t	handle_dq(char *line)
 {
 	size_t	i;
 
-	i = 0;
+	i = 1;
 	while (line[i] != 34 && line[i])
 		i++;
 	i++;

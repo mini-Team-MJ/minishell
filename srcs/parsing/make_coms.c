@@ -14,7 +14,6 @@
 
 t_com	*make_com(t_token **tokens, t_shell *shell)
 {
-	t_token	*current;
 	t_com	*new;
 
 	if (!*tokens)
@@ -25,7 +24,14 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 		print_mem_error("memory allocation error", shell);
 		return (NULL);
 	}
+<<<<<<< HEAD
 	current = *tokens;
+=======
+	new->next = NULL;
+	new->prev = NULL;
+	new->infile = NULL;
+	new->outfile = NULL;
+>>>>>>> 6982ba3cdbb775d63e5dc65197bbee0cddd40f2a
 	new->args = make_args(tokens, shell);
 	setup_directors(new, tokens);
 	return (new);
@@ -88,13 +94,17 @@ bool	path_checker(t_com **coms, t_shell *shell)
 	current = *coms;
 	while (current->next)
 	{
-		if (current->type == PATH)
+		if (current->type == PATH && current->args[0])
 			return (check_if_exists(current->args[0], shell, current));
+		if (current->type == CD && current->args[1])
+			return (check_if_exists(current->args[1], shell, current));
+		current = current->next;
 	}
-	if (current->type == PATH)
-			return (check_if_exists(current->args[0], shell, current));
+	if (current->type == PATH && current->args[0])
+		return (check_if_exists(current->args[0], shell, current));
+	if (current->type == CD && current->args[1])
+		return (check_if_exists(current->args[1], shell, current));
 	return (true);
-		
 }
 
 void	expand_env_com_types(t_com **coms)
@@ -126,6 +136,5 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell)
 		free_coms(coms);
 		return (NULL);
 	}
-	(void)cc;	// tmp
 	return (*coms);
 }

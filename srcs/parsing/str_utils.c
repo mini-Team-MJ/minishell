@@ -33,7 +33,7 @@ int	ftstrncmp(char *s1, char *s2, size_t n)
 	size_t	i;
 
 	i = 0;
-	while ((i < n) && (s1[i] && s2[i]))
+	while ((i < n) && (s1[i] || s2[i]))
 	{
 		if (s1[i] != s2[i])
 			return (0);
@@ -84,7 +84,7 @@ char	*custom_dup(char *line)
 	if (!res)
 		return (NULL);
 	i = 0;
-	while (i < l)
+	while (line[i])
 	{
 		res[i] = line[i];
 		i++;

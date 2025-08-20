@@ -170,7 +170,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	env->name = "$W";
+	env->name = "W";
 	env->value = "minishell";
 	sh.commands = NULL;
 	sh.tokens = NULL;
@@ -184,6 +184,7 @@ int main(int argc, char **argv, char **envp)
 		sh.tokens = tokenize(line, &sh.tokens, &sh);
 		if (sh.tokens && *line)
 			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
+		print_comms(&sh.commands);
 		if (sh.commands)
 			execute(&sh);
 		// printf("[DEBUG] : after execute\n");

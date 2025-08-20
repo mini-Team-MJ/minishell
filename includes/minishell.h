@@ -192,7 +192,7 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell);
 
 void	set_com_type(char *str, t_com *token);
 size_t	arg_mover(char *str);
-char	*make_arg(char *str, t_shell *shell, bool is_dq);
+char	*make_arg(char *str, t_shell *shell);
 char	**args_creation_loop(t_token **tokens, char **args,
 			t_shell *shell, size_t ac);
 char	**make_args(t_token **tokens, t_shell *shell);
@@ -225,7 +225,7 @@ size_t	handle_dollar(char *line);
 
 
 t_env	*find_env(char *name, t_env **envs);
-char	*make_name(char *str, bool is_dq);
+char	*make_name(char *str);
 size_t	get_arg_len(char *arg);
 bool	check_if_exists(char *path, t_shell *shell, t_com *com);
 bool	is_valid_dir(char *path);

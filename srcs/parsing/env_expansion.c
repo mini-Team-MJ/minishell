@@ -29,6 +29,8 @@ char	*joiner(char *arg, char *env, char *res, char *name)
 			if (env)
 				j += move_env(&res[j], env);
 			i += get_len(name);
+			if (!ftstrcmp("$", name))
+				i++;
 		}
 		else
 			res[j++] = arg[i++];
@@ -88,14 +90,12 @@ char	*parse_env(char *str, char *name, t_shell *shell, bool got_envs)
 	char	*ret;
 	t_env	*env;
 	char	*sig_val;
-
-	if (ftstrncmp(name, "$?", 2))
+	if (ftstrncmp(name, "?", 1))
 	{
 		sig_val = get_sig_val(shell->last_exit);
 		ret = custom_join(str, sig_val, shell, "?");
-		//free(sig_val);
 	}
-	if (ftstrcmp(name, "$"))
+	else if (ftstrcmp(name, "$"))
 		ret = custom_join(str, "$", shell, name);
 	else
 	{

@@ -25,7 +25,7 @@ bool	does_env_exist(t_token *token, t_env **envs)
 		return (true);
 	while (current)
 	{
-		if (ftstrcmp(token->str, current->name))
+		if (ftstrcmp(&token->str[1], current->name))
 			return (true);
 		current = current->next;
 	}
@@ -41,6 +41,8 @@ void	com_path_setter(char *str, t_com *token)
 		token->type = PATH;
 	if (ftstrncmp("/", str, 1))
 		token->type = PATH;
+	if (ftstrncmp("cd", str, 1))
+		token->type = CD;
 }
 
 void	token_path_setter(char *str, t_token *token)
@@ -51,6 +53,8 @@ void	token_path_setter(char *str, t_token *token)
 		token->type = PATH;
 	if (ftstrncmp("/", str, 1))
 		token->type = PATH;
+	if (ftstrncmp("cd", str, 1))
+		token->type = CD;
 }
 
 void	init_token_vals(t_token *token)
@@ -68,7 +72,7 @@ bool	is_separator(char c)
 		return (true);
 	if (is_whitespace(c) || c == '|')
 		return (true);
-	if (c == 32 || c == '$')
+	if (c == 32 || c == '$' || c == 39)
 		return (true);
 	return (false);
 }
