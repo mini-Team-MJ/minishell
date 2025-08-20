@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:52:51 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/20 23:51:39 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/21 01:06:26 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void debug_print_commands(t_com *commands)
 	printf("[DEBUG] End commands\n");
 }
 
-/* SIGINT 핸들러: 새 프롬프트만 출력 */
 static void sigint_handler(int sig)
 {
 	g_signal = sig;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ljh3900 <ljh3900@student.42.fr>            +#+  +:+       +#+        */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 08:21:02 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/06/11 20:42:58 by ljh3900          ###   ########.fr       */
+/*   Updated: 2025/08/21 01:07:44 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,7 @@ static int	is_n_option(const char *s)
 	return (s[i] == '\0');
 }
 
-static void	print_dollar(const char *arg, t_env *env_list, int last_exit)
-{
-	t_env *node;
-
-	if (arg[1] == '?' && arg[2] == '\0')
-	{
-		ft_putnbr_fd(last_exit, 1);
-		return;
-	}
-	node = env_find(env_list, arg + 1);
-	if (node && node->value)
-		ft_putstr_fd(node->value, 1);
-}
-
-int ft_echo(char **argv, t_env *env_list, int last_exit)
+int ft_echo(char **argv)
 {
 	int	i;
 	int	print_nl;
@@ -51,10 +37,7 @@ int ft_echo(char **argv, t_env *env_list, int last_exit)
 	}
 	while (argv[i])
 	{
-		if (argv[i][0] == '$')
-			print_dollar(argv[i], env_list, last_exit);
-		else
-			ft_putstr_fd(argv[i], 1);
+		ft_putstr_fd(argv[i], 1);
 		if (argv[i + 1])
 			ft_putchar_fd(' ', 1);
 		i++;

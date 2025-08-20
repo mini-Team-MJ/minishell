@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 00:35:58 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/08/20 04:50:35 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/21 01:07:04 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ typedef struct t_com
 	char			*path;
 	char			*infile;
 	char			*outfile;
+	char			*heredoc_delimiter;
 	enum e_Types	type;
 	bool			is_piped;
 	bool			redir_type_in;
@@ -259,7 +260,7 @@ bool	is_separator(char c);
 /* ======================= */
 int		ft_cd(char **argv, t_env **env_list);
 char	*resolve_path(char *arg, t_env *env_list, int *alloc_flag);
-int		ft_echo(char **argv, t_env *env_list, int last_exit);
+int		ft_echo(char **argv);
 int		ft_env(char **argv, t_env *env_list);
 int		ft_export(char **argv, t_env **env_list);
 int		ft_pwd(char **argv);

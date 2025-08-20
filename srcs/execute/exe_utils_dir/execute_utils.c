@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 21:05:00 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/08/16 00:34:41 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/21 01:07:18 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	handle_builtin_core(char **argv, t_env **env_list,
 	if (ft_strcmp(cmd, "cd") == 0)
 		exit_code = ft_cd(argv, env_list);
 	else if (ft_strcmp(cmd, "echo") == 0)
-		exit_code = ft_echo(argv, *env_list, sh->last_exit);
+		exit_code = ft_echo(argv);
 	else if (ft_strcmp(cmd, "env") == 0)
 		exit_code = ft_env(argv, *env_list);
 	else if (ft_strcmp(cmd, "export") == 0)
