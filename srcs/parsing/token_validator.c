@@ -21,7 +21,8 @@ bool	check_if_exists(char *path, t_shell *shell, t_com *com)
 	{
 		if (is_valid_dir(path))
 		{
-			com->type = DIRECTORY;
+			if (com->type == PATH)
+				com->type = DIRECTORY;
 			return (true);
 		}
 		write_syntax_error("invalid directory or filename", shell);

@@ -45,6 +45,55 @@ size_t	token_len(char *line, t_token *token)
 	return (i);
 }
 
+void	sq_dub(char *line, char *res, size_t l)
+{
+	size_t	i;
+	size_t	j;
+
+	if (!line)
+		return ;
+	i = 0;
+	j = 0;
+	while(i < l)
+	{
+		if (line[i] == 39)
+			i++;
+		else
+		{
+			res[j] = line[i];
+			i++;
+			j++;
+		}
+	}
+	res[j] = '\0';
+}
+
+
+void	dq_dub(char *line, char *res, size_t l)
+{
+	size_t	i;
+	size_t	j;
+
+	if (!line)
+		return ;
+	i = 0;
+	j = 0;
+	while(i < l)
+	{
+		if (line[i] == 34)
+			i++;
+		else
+		{
+			res[j] = line[i];
+			i++;
+			j++;
+		}
+	}
+	res[j] = '\0';
+}
+
+
+
 char	*token_dup(char *line, t_token *token)
 {
 	size_t	i;
@@ -56,6 +105,16 @@ char	*token_dup(char *line, t_token *token)
 	if (!res)
 		return (NULL);
 	i = 0;
+	if (token->sq)
+	{
+		sq_dub(line, res, l);
+		return (res);
+	}
+	if (token->dq)
+	{
+		dq_dub(line, res, l);
+		return (res);
+	}
 	while (i < l)
 	{
 		res[i] = line[i];

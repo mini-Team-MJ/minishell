@@ -15,28 +15,36 @@
 bool	check_sq(char *line)
 {
 	size_t	i;
+	size_t	count;
 
+	count = 0;
 	i = 0;
 	while (line[i])
 	{
 		if (line[i] == 39)
-			return (true);
+			count++;
 		i++;
 	}
+	if (count % 2 == 0)
+		return (true);
 	return (false);
 }
 
 bool	check_dq(char *line)
 {
 	size_t	i;
-
+	size_t	count;
+	
 	i = 0;
+	count = 0;
 	while (line[i])
 	{
 		if (line[i] == 34)
-			return (true);
+			count++;
 		i++;
 	}
+	if (count % 2 == 0)
+		return (true);
 	return (false);
 }
 
@@ -71,7 +79,7 @@ bool	line_validator(char *line)
 	{
 		if (line[i] == 39 || line[i] == 34)
 		{
-			if (!q_check_handler(&line[i + 1], line[i]))
+			if (!q_check_handler(&line[i], line[i]))
 				return (false);
 			i += q_count_handler(&line[i + 1], line[i]);
 		}

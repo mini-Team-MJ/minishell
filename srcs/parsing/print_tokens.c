@@ -43,6 +43,7 @@ void	write_str(char *str)
 		return ;
 	while (str[++i])
 		write(1, &str[i], 1);
+	write(1, "\n", 1);
 }
 
 void	print_tokens(t_token **tokens)

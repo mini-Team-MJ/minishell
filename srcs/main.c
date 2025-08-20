@@ -68,7 +68,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	env->name = "$W";
+	env->name = "W";
 	env->value = "minishell";
 	sh.commands = NULL;
 	sh.tokens = NULL;

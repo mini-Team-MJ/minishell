@@ -47,7 +47,7 @@ size_t	arg_mover(char *str)
 	i = 0;
 	if (!str)
 		return (i);
-	while (str[i] && !is_whitespace(str[i]) && str[i] != '$')
+	while (str[i] && !is_separator(str[i]))
 		i++;
 	return (i);
 }
