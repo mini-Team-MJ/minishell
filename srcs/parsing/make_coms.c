@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 19:30:08 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/20 23:39:43 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:48:26 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,10 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 		print_mem_error("memory allocation error", shell);
 		return (NULL);
 	}
-<<<<<<< HEAD
-	current = *tokens;
-=======
 	new->next = NULL;
 	new->prev = NULL;
 	new->infile = NULL;
 	new->outfile = NULL;
->>>>>>> 6982ba3cdbb775d63e5dc65197bbee0cddd40f2a
 	new->args = make_args(tokens, shell);
 	setup_directors(new, tokens);
 	return (new);
@@ -127,10 +123,12 @@ void	expand_env_com_types(t_com **coms)
 t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell)
 {
 	size_t	cc;
+	
 	if (!tokens)
 		return (NULL);
 	cc = count_coms(tokens);
 	*coms = make_coms(tokens, coms, shell);
+	(void)cc;	// tmp for compile
 	if (!path_checker(coms, shell))
 	{
 		free_coms(coms);

@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:52:51 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/20 05:50:49 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:51:39 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	print_comms(t_com **coms)
 		i = 0;
 		while(curr->args[i])
 		{
-			printf("print args:%s \n", curr->args[i]);
+			// printf("print args:%s \n", curr->args[i]);
 			i++;
 		}
 		curr = curr->next;
@@ -105,68 +105,7 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_shell	sh;
-	
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	
-	/* 파트너가 env 초기화 처리할 예정이므로 기존 코드 유지 */
 	t_env *env = (t_env *)malloc(1 * sizeof(t_env));
-	env->name = "$W";
-	env->value = "minishell";
-	env->next = NULL;
-	
-	sh.commands = NULL;
-	sh.tokens = NULL;
-	sh.envs = env;
-	sh.last_exit = 0;
-	setup_signals();
-	
-	// main.c의 while 루프를 이렇게 수정하세요
-	// main.c의 while 루프 - printf 최소화
-	while ((line = readline(GRN "minishell> " RESET)))
-	{
-		if (*line)
-			add_history(line);
-		
-		sh.tokens = tokenize(line, &sh.tokens, &sh);
-		
-		if (sh.tokens)
-		{
-			debug_print_tokens(sh.tokens);  // 이것만 남기고
-			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
-			
-			if (sh.commands)
-			{
-				debug_print_commands(sh.commands);  // 이것만 남기고
-				execute(&sh);
-			}
-		}
-		
-		free_sh_tokens(&sh.tokens);
-		free_coms(&sh.commands);
-		free(line);
-	}
-	rl_clear_history();
-	
-	/* 임시 env 해제 (파트너가 proper env_clear 구현할 때까지) */
-	if (sh.envs)
-	{
-		if (sh.envs->name)
-			free(sh.envs->name);
-		if (sh.envs->value)
-			free(sh.envs->value);
-		free(sh.envs);
-	}
-	
-	return (0);
-}
-/*
-int main(int argc, char **argv, char **envp)
-{
-	char	*line;
-	t_shell	sh;
-	t_env *env = (t_env *)malloc(1 * sizeof(t_env *));
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -187,15 +126,10 @@ int main(int argc, char **argv, char **envp)
 		print_comms(&sh.commands);
 		if (sh.commands)
 			execute(&sh);
-		// printf("[DEBUG] : after execute\n");
 		free_sh_tokens(&sh.tokens);
-		// printf("[DEBUG] : after free_sh_tokens\n");
 		free_coms(&sh.commands);
-		// printf("[DEBUG] : after free_coms\n");
 		free(line);
-		// printf("[DEBUG] : after free\n");
 	}
 	rl_clear_history();
 	return 0;
 }
-*/
