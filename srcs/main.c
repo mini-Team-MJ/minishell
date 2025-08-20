@@ -6,7 +6,7 @@
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:52:51 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/15 18:11:04 by juhyeonl         ###   ########.fr       */
+/*   Updated: 2025/08/16 01:55:54 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,15 +82,16 @@ int main(int argc, char **argv, char **envp)
 		sh.tokens = tokenize(line, &sh.tokens, &sh);
 		if (sh.tokens && *line)
 			sh.commands = init_coms(&sh.tokens, &sh.commands, &sh);
+		print_comms(&sh.commands);
 		if (sh.commands)
 			execute(&sh);
-		printf("[DEBUG] : after execute\n");
+		// printf("[DEBUG] : after execute\n");
 		free_sh_tokens(&sh.tokens);
-		printf("[DEBUG] : after free_sh_tokens\n");
+		// printf("[DEBUG] : after free_sh_tokens\n");
 		free_coms(&sh.commands);
-		printf("[DEBUG] : after free_coms\n");
+		// printf("[DEBUG] : after free_coms\n");
 		free(line);
-		printf("[DEBUG] : after free\n");
+		// printf("[DEBUG] : after free\n");
 	}
 	rl_clear_history();
 	return 0;

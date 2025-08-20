@@ -52,7 +52,7 @@ size_t	arg_mover(char *str)
 	return (i);
 }
 
-char	*make_arg(char *str, t_shell *shell, bool is_dq)
+char	*make_arg(char *str, t_shell *shell)
 {
 	size_t	i;
 	char	*arg;
@@ -65,7 +65,7 @@ char	*make_arg(char *str, t_shell *shell, bool is_dq)
 	{
 		if (str[i] == '$')
 		{
-			name = make_name(&str[i], is_dq);
+			name = make_name(&str[i]);
 			if (!got_envs)
 				arg = env_parse_handler(str, name, shell, got_envs);
 			else
@@ -91,10 +91,10 @@ char	**args_creation_loop(t_token **tokens, char **args,
 	current = *tokens;
 	while (i < ac)
 	{
-		if (current->sq || get_len(current->str) == 1)
+		if (current->sq)
 			args[i] = custom_dup(current->str);
 		else
-			args[i] = make_arg(current->str, shell, current->dq);
+			args[i] = make_arg(current->str, shell);
 		if (!args[i])
 		{
 			free_args(args);

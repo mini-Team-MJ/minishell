@@ -57,19 +57,7 @@ void	name_s(char *str, char *ret)
 	ret[i] = '\0';
 }
 
-void	name_no_s(char *str, char *ret)
-{
-	size_t	i;
-	i = 0;
-	while (str[i] && !is_separator(str[i]))
-	{
-		ret[i] = str[i];
-		i++;
-	}
-	ret[i] = '\0';
-}
-
-char	*make_name(char *str, bool is_dq)
+char	*make_name(char *str)
 {
 	size_t	i;
 	char	*ret;
@@ -82,8 +70,11 @@ char	*make_name(char *str, bool is_dq)
 	ret = (char *)malloc((1 + i) * sizeof(char));
 	if (!ret)
 		return (NULL);
-	if (!has_space(str) && is_dq)
-		name_no_s(&str[1], ret);
+	if(!str[1] || is_separator(str[1]))
+	{
+		ret[0] = '$';
+		ret[1] = '\0';
+	}
 	else
 		name_s(&str[1], ret);
 	return (ret);
@@ -102,7 +93,7 @@ size_t	get_arg_len(char *arg)
 		return (l);
 	while (arg[i])
 	{
-		if (arg[i] == '$' && !detected)
+		if (arg[i] == '$' && !detected && !is_separator(arg[i + 1]))
 		{
 			while (arg[i] && !is_separator(arg[i]))
 				i++;

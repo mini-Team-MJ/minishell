@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/25 23:18:18 by ljh3900           #+#    #+#             */
-/*   Updated: 2025/08/15 17:04:45 by juhyeonl         ###   ########.fr       */
+/*   Created: 2025/08/16 00:35:58 by juhyeonl          #+#    #+#             */
+/*   Updated: 2025/08/20 04:50:35 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ typedef struct t_com
 	bool			is_piped;
 	bool			redir_type_in;
 	bool			redir_type_out;
-	bool			append; /* TRUE if >> append mode */
+	bool			append;
 	struct t_com	*next;
 	struct t_com	*prev;
 }	t_com;
@@ -118,7 +118,7 @@ typedef struct t_shell
 	t_token			*tokens;
 	t_env			*envs;
 	char			**lines;
-	int				last_exit; /* exit status of last executed pipeline */
+	int				last_exit;
 }	t_shell;
 
 /* Stub command struct (used in temporary executor) */
@@ -145,20 +145,10 @@ void	err_with_cmd(char *prefix, char *arg, char *suffix);
 /* ======================= */
 /*     Execute Layer       */
 /* ======================= */
-/* Entry point */
 int		execute(t_shell *sh);
-/* Pipeline execution */
-int		exec_pipeline(t_shell *sh, t_com *head, int n);
-/* Child process execution */
-void	child_exec(t_com *cmd, t_shell *sh, int i, int n, int prev[2],
-			int next[2]);
-/* Redirections (<, >, >>) */
+void	child_exec(t_com *cmd, t_shell *sh, int i, int n, int prev[2], int next[2]);
 int		apply_redirs(t_com *cmd, t_shell *sh);
-/* Run builtin in parent when possible */
-int		run_builtin_parent(t_com *cmd, t_shell *sh);
-/* Wait for all children */
 int		wait_all(pid_t *pids, int n, t_shell *sh);
-/* Pipe and signal utilities */
 void	close_pipe_pair(int p[2]);
 void	set_child_signals(void);
 
@@ -213,7 +203,7 @@ t_com	*init_coms(t_token **tokens, t_com **coms, t_shell *shell);
 
 void	set_com_type(char *str, t_com *token);
 size_t	arg_mover(char *str);
-char	*make_arg(char *str, t_shell *shell, bool is_dq);
+char	*make_arg(char *str, t_shell *shell);
 char	**args_creation_loop(t_token **tokens, char **args,
 			t_shell *shell, size_t ac);
 char	**make_args(t_token **tokens, t_shell *shell);
@@ -246,7 +236,7 @@ size_t	handle_dollar(char *line);
 
 
 t_env	*find_env(char *name, t_env **envs);
-char	*make_name(char *str, bool is_dq);
+char	*make_name(char *str);
 size_t	get_arg_len(char *arg);
 bool	check_if_exists(char *path, t_shell *shell, t_com *com);
 bool	is_valid_dir(char *path);
@@ -270,20 +260,47 @@ int		ft_env(char **argv, t_env *env_list);
 int		ft_export(char **argv, t_env **env_list);
 int		ft_pwd(char **argv);
 int		ft_unset(char **argv, t_env **env_list);
-void	ft_exit(char **argv);
-int		ft_str_isalpha(char *str);
 
-/* env utils */
 t_env	*env_new(const char *name, const char *value);
+t_env	*env_init(char **envp);
 int		env_add_back(t_env **lst, t_env *new_node);
 void	env_clear(t_env **lst);
-t_env	*env_init(char **envp);
 t_env	*env_find(t_env *lst, const char *name);
 
-/* export/unset utils */
 int		export_cleanup(char *name, char *value, t_env *node, int ret_code);
 int		is_valid_name(const char *s);
 void	print_export_list(t_env *env);
 int		env_remove(t_env **lst, const char *name);
+
+/* NEW builtin context-aware helpers and exit */
+int		handle_builtin_parent(char **argv, t_env **env_list, t_shell *sh);
+int		handle_builtin_child(char **argv, t_env **env_list, t_shell *sh);
+int		ft_exit_builtin(t_shell *sh, char **argv, int is_parent, int in_pipe);
+
+int		is_builtin_name(const char *name);
+int		run_builtin_parent(t_com *cmd, t_shell *sh);
+int		run_builtin_parent_with_redirs(t_com *cmd, t_shell *sh);
+int		exec_pipeline(t_shell *sh, t_com *head, int n);
+
+int		is_builtin_name(const char *s);
+int		dispatch_builtin(t_shell *sh, t_com *cmd, int is_parent, int in_pipe);
+/* int	ft_str_isalpha(char *str);  // remove or keep if used elsewhere */
+
+/* ======================= */
+/*   External Exec (ext_)  */
+/*  (ADDED: ONLY additions)*/
+/* ======================= */
+char	**ext_env_to_envp(t_env *env);
+int		ext_has_slash(const char *s);
+char	*ext_get_path_value(t_env *env_list);
+char	**ext_split_paths(const char *pathvar);
+int		ext_errno_to_exit(int e);
+int		ext_try_exec(const char *path, char **argv, char **envp);
+void	ext_print_perm_denied(const char *cmd);
+void	ext_print_no_such_file(const char *cmd);
+void	ext_print_is_directory(const char *cmd);
+void	ext_print_cmd_not_found(const char *cmd);
+void	ext_exec_direct_path(char **argv, char **envp, t_shell *sh);
+void	ext_exec_with_path_search(char **argv, t_env *env_list, char **envp, t_shell *sh);
 
 #endif
