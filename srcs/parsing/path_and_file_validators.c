@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_and_file_validators.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhurtamo <mhurtamo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 18:20:36 by mhurtamo          #+#    #+#             */
-/*   Updated: 2025/08/08 18:20:41 by mhurtamo         ###   ########.fr       */
+/*   Updated: 2025/08/18 01:37:31 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

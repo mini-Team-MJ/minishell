@@ -6,7 +6,7 @@
 #    By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 15:00:00 by JuHyeon           #+#    #+#              #
-#    Updated: 2025/08/15 17:06:11 by juhyeonl         ###   ########.fr        #
+#    Updated: 2025/08/17 18:03:31 by juhyeonl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRCS = srcs/main.c \
 	srcs/execute/exe_utils_dir/env_utils.c \
 	srcs/execute/exe_utils_dir/execute_utils.c \
 	srcs/execute/exe_utils_dir/export_unset_utils.c \
+	srcs/execute/exe_utils_dir/is_builtin.c \
 	srcs/execute/builtin/ft_cd.c \
 	srcs/execute/builtin/ft_echo.c \
 	srcs/execute/builtin/ft_env.c \
@@ -56,6 +57,9 @@ SRCS = srcs/main.c \
 	srcs/execute/wait_utils.c \
 	srcs/execute/child.c \
 	srcs/execute/run_external.c \
+	srcs/execute/ext_exec.c \
+	srcs/execute/ext_utils.c \
+	srcs/execute/run_builtin_parent_with_redirs.c \
 	srcs/execute/pipeline.c
 
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)

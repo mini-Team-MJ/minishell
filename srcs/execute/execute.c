@@ -5,110 +5,111 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: juhyeonl <juhyeonl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/15 16:22:28 by juhyeonl          #+#    #+#             */
-/*   Updated: 2025/08/15 18:09:12 by juhyeonl         ###   ########.fr       */
+/*   Created: 2025/08/17 15:20:00 by you               #+#    #+#             */
+/*   Updated: 2025/08/20 04:51:44 by juhyeonl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "minishell.h"
 
-// static void	print_tokens_list(t_token *tok)
-// {
-// 	while (tok)
-// 	{
-// 		printf("[TOKEN] id=%zu type=%d str=\"%s\" sq=%d dq=%d\n",
-// 			tok->id, tok->type,
-// 			tok->str ? tok->str : "(null)",
-// 			tok->sq, tok->dq);
-// 		tok = tok->next;
-// 	}
-// }
+/*
+** Assumed prototypes declared in minishell.h:
+**   int   _name(const char *name);
+**   int   run_builtin_parent(t_shell *sh, t_com *cmd);
+**   int   run_builtin_parent_with_redirs(t_shell *sh, t_com *cmd);
+**   int   exec_pipeline(t_shell *sh, t_com **first, int ncmds);
+**
+** Data model assumption:
+**   t_com is a linked list node for a pipeline:
+**     cmd -> next -> next ...
+**   Parser stores the head at sh->commands.
+*/
 
-// /* Print all commands for debugging */
-// static void	print_commands_list(t_com *cmd)
-// {
-// 	int	i;
-
-// 	while (cmd)
-// 	{
-// 		printf("[COMMAND] path=\"%s\" type=%d infile=\"%s\" outfile=\"%s\"",
-// 			cmd->path ? cmd->path : "(null)",
-// 			cmd->type,
-// 			cmd->infile ? cmd->infile : "(null)",
-// 			cmd->outfile ? cmd->outfile : "(null)");
-// 		printf(" append=%d is_piped=%d\n", cmd->append, cmd->is_piped);
-// 		if (cmd->args)
-// 		{
-// 			i = 0;
-// 			while (cmd->args[i])
-// 			{
-// 				printf("   arg[%d] = \"%s\"\n", i, cmd->args[i]);
-// 				i++;
-// 			}
-// 		}
-// 		cmd = cmd->next;
-// 	}
-// }
-
-// /* Print all environment variables for debugging */
-// static void	print_env_list(t_env *env)
-// {
-// 	while (env)
-// 	{
-// 		printf("[ENV] %s=%s\n",
-// 			env->name ? env->name : "(null)",
-// 			env->value ? env->value : "(null)");
-// 		env = env->next;
-// 	}
-// }
-
-// /* Main debug print function */
-// static void	print_shell_state(t_shell *sh)
-// {
-// 	if (!sh)
-// 	{
-// 		printf("[SHELL] (null)\n");
-// 		return ;
-// 	}
-// 	printf("========== SHELL STATE ==========\n");
-// 	printf("last_exit = %d\n", sh->last_exit);
-// 	printf("---- TOKENS ----\n");
-// 	print_tokens_list(sh->tokens);
-// 	printf("---- COMMANDS ----\n");
-// 	print_commands_list(sh->commands);
-// 	printf("---- ENVS ----\n");
-// 	print_env_list(sh->envs);
-// 	printf("=================================\n");
-// }
-
-static int	count_cmds(t_com *cur)
+/* count how many commands are chained in a pipeline (linked list) */
+static int	count_pipeline(const t_com *head)
 {
-	int	n;
+	int	count;
 
-	n = 0;
-	while (cur)
+	count = 0;
+	while (head)
 	{
-		n++;
-		cur = cur->next;
+		++count;
+		head = head->next;
 	}
-	return (n);
+	return (count);
 }
 
-int	execute(t_shell *sh)
+/* detect if this command has any redirection to apply in its own context */
+static int	has_redirs(const t_com *cmd)
 {
-	t_com	*cmd;
-	int		n;
-
-	// print_shell_state(sh);
-	cmd = sh->commands;
 	if (!cmd)
 		return (0);
-	n = count_cmds(cmd);
-	if (n == 1 && is_builtin(cmd->args[0])
-		&& cmd->infile == NULL && cmd->outfile == NULL)
+	if (cmd->infile && cmd->infile[0])
+		return (1);
+	if (cmd->outfile && cmd->outfile[0])
+		return (1);
+	if (cmd->append) /* append flag (>>), if the project uses it */
+		return (1);
+	/* if you have heredoc or other flags, add checks here */
+	return (0);
+}
+
+/*
+** Single command policy:
+** - builtin:
+**     * without redirs -> run in parent (keeps shell state)
+**     * with redirs    -> run in parent with FD backup/restore
+** - external: delegate to exec_pipeline with n=1 (unified child/exec path)
+**
+** exec_pipeline() is expected to set sh->last_exit after wait().
+*/
+static int	exec_single(t_shell *sh, t_com *cmd)
+{
+	int		status;
+	char	*name;
+
+	if (!cmd || !cmd->args || !cmd->args[0])
 	{
-		sh->last_exit = run_builtin_parent(cmd, sh);
-		return (sh->last_exit);
+		sh->last_exit = 0;
+		return (0);
 	}
-	return (exec_pipeline(sh, cmd, n));
+	name = cmd->args[0];
+	if (is_builtin_name(name))
+	{
+		if (has_redirs(cmd))
+			status = run_builtin_parent_with_redirs(cmd, sh);
+		else
+			status = run_builtin_parent(cmd, sh);
+		sh->last_exit = status;
+		return (status);
+	}
+	return (exec_pipeline(sh, cmd, 1));
+}
+
+
+/*
+** Entry point:
+** - sh->commands is the head of a linked list (pipeline)
+** - 0 cmd  -> last_exit = 0
+** - 1 cmd  -> exec_single()
+** - >=2 cmd-> exec_pipeline()
+*/
+int	execute(t_shell *sh)
+{
+	int		ncmds;
+	t_com	*first;
+
+	if (!sh)
+		return (1);
+	first = sh->commands;
+	ncmds = count_pipeline(first);
+	if (ncmds <= 0)
+	{
+		sh->last_exit = 0;
+		return (0);
+	}
+	if (ncmds == 1)
+		return (exec_single(sh, first));
+	/* multi-command pipeline */
+	return (exec_pipeline(sh, first, ncmds));
 }
