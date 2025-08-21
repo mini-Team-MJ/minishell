@@ -36,11 +36,13 @@ void	com_path_setter(char *str, t_com *token)
 {
 	if (!str || !token)
 		return ;
+	if (token->type != WORD)
+		return ;
 	if (ftstrncmp("./", str, 2))
 		token->type = PATH;
 	if (ftstrncmp("/", str, 1))
 		token->type = PATH;
-	if (ftstrncmp("cd", str, 1))
+	if (ftstrcmp("cd", str))
 		token->type = CD;
 }
 
@@ -48,11 +50,13 @@ void	token_path_setter(char *str, t_token *token)
 {
 	if (!str || !token)
 		return ;
+	if (token->type != WORD)
+		return ;
 	if (ftstrncmp("./", str, 2))
 		token->type = PATH;
 	if (ftstrncmp("/", str, 1))
 		token->type = PATH;
-	if (ftstrncmp("cd", str, 1))
+	if (ftstrcmp("cd", str))
 		token->type = CD;
 }
 

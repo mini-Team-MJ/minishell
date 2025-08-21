@@ -28,6 +28,7 @@ t_com	*make_com(t_token **tokens, t_shell *shell)
 	new->prev = NULL;
 	new->infile = NULL;
 	new->outfile = NULL;
+	new->type = WORD;
 	new->args = make_args(tokens, shell);
 	setup_directors(new, tokens);
 	return (new);
